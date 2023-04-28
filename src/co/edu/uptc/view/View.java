@@ -1,7 +1,6 @@
 package co.edu.uptc.view;
 
 import co.edu.uptc.presenter.Contract;
-import com.sun.tools.javac.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +12,7 @@ public class View extends JFrame implements Contract.View {
 
     public View (){
         setTitle("Plane Game");
-        setSize(new Dimension(815,540));
+        setSize(new Dimension(814,537));//Ancho +14, Alto +37
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setBackground(Color.white);
