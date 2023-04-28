@@ -4,6 +4,7 @@ import co.edu.uptc.view.Globals;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ScorePanel extends JPanel {
@@ -29,16 +30,11 @@ public class ScorePanel extends JPanel {
         stopButton = new JButton("Detener");
         exitButton = new JButton("Salir");
 
-
         flyingPlaneLabel.setFont(Globals.getProgramFont(15));
         arrivedPlaneLabel.setFont(Globals.getProgramFont(15));
-        startButton.setFont(Globals.getProgramFont(15));
-        pauseButton.setFont(Globals.getProgramFont(15));
-        stopButton.setFont(Globals.getProgramFont(15));
-        exitButton.setFont(Globals.getProgramFont(15));
-
         flyingPlaneLabel.setForeground(Color.white);
         arrivedPlaneLabel.setForeground(Color.white);
+
         setButtonFeatures(startButton, new Color(41, 121, 255));
         setButtonFeatures(pauseButton, new Color(255, 109, 0));
         setButtonFeatures(stopButton, new Color(158, 158, 158));
@@ -49,69 +45,36 @@ public class ScorePanel extends JPanel {
     }
 
     private void addListeners() {
-        startButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                startButton.setBackground(new Color(41, 121, 255).brighter());
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                startButton.setBackground(new Color(41, 121, 255));
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Start");
-            }
+        startButton.addActionListener(e -> {
+            System.out.println("Start button pressed");
         });
-        pauseButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                pauseButton.setBackground(new Color(255, 109, 0).brighter());
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pauseButton.setBackground(new Color(255, 109, 0));
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Pause");
-            }
+        pauseButton.addActionListener(e -> {
+            System.out.println("Pause button pressed");
         });
-        stopButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                stopButton.setBackground(new Color(158, 158, 158).brighter());
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                stopButton.setBackground(new Color(158, 158, 158));
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Stop");
-            }
+        stopButton.addActionListener(e -> {
+            System.out.println("Stop button pressed");
         });
-        exitButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exitButton.setBackground(new Color(139, 0, 0).brighter());
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                exitButton.setBackground(new Color(139, 0, 0));
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Exit");
-            }
+        exitButton.addActionListener(e -> {
+            System.out.println("Exit button pressed");
         });
     }
 
-    private void setButtonFeatures(JButton button, Color backGroundColor) {
-        button.setBackground(backGroundColor);
-        button.setBorder(BorderFactory.createLineBorder(backGroundColor));
+    private void setButtonFeatures(JButton button, Color backgroundColor) {
+        button.setFont(Globals.getProgramFont(15));
+        button.setBackground(backgroundColor);
+        button.setBorder(BorderFactory.createLineBorder(backgroundColor));
         button.setFocusPainted(false);
         button.setForeground(Color.black);
+
+        button.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                button.setBackground(backgroundColor.brighter());
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                button.setBackground(backgroundColor);
+            }
+        });
     }
 
     private void addComponents() {
@@ -138,7 +101,7 @@ public class ScorePanel extends JPanel {
         gbc.gridy = 1;
         gbc.gridwidth = 3;
         gbc.gridheight = 1;
-        gbc.insets = new Insets(10,0,20,0);
+        gbc.insets = new Insets(10, 0, 20, 0);
         add(arrivedPlaneLabel, gbc);
     }
 
@@ -159,7 +122,7 @@ public class ScorePanel extends JPanel {
         gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.insets = new Insets(0,10,0,10);
+        gbc.insets = new Insets(0, 10, 0, 10);
         gbc.ipadx = 12;
         gbc.ipady = 12;
         add(pauseButton, gbc);
@@ -182,9 +145,65 @@ public class ScorePanel extends JPanel {
         gbc.gridy = 3;
         gbc.gridwidth = 3;
         gbc.gridheight = 1;
-        gbc.insets = new Insets(10,0,0,0);
+        gbc.insets = new Insets(10, 0, 0, 0);
         gbc.ipadx = 12;
         gbc.ipady = 12;
         add(exitButton, gbc);
+    }
+
+    public void setQuantityArrivedPlane(int arrivedPlane) {
+        arrivedPlaneLabel.setText("Aviones aterrizados: " + arrivedPlane);
+    }
+
+    public void setQuantityFlyingPlane(int flyingPlane) {
+        flyingPlaneLabel.setText("Aviones volando: " + flyingPlane);
+    }
+
+    public JLabel getFlyingPlaneLabel() {
+        return flyingPlaneLabel;
+    }
+
+    public void setFlyingPlaneLabel(JLabel flyingPlaneLabel) {
+        this.flyingPlaneLabel = flyingPlaneLabel;
+    }
+
+    public JLabel getArrivedPlaneLabel() {
+        return arrivedPlaneLabel;
+    }
+
+    public void setArrivedPlaneLabel(JLabel arrivedPlaneLabel) {
+        this.arrivedPlaneLabel = arrivedPlaneLabel;
+    }
+
+    public JButton getStartButton() {
+        return startButton;
+    }
+
+    public void setStartButton(JButton startButton) {
+        this.startButton = startButton;
+    }
+
+    public JButton getPauseButton() {
+        return pauseButton;
+    }
+
+    public void setPauseButton(JButton pauseButton) {
+        this.pauseButton = pauseButton;
+    }
+
+    public JButton getStopButton() {
+        return stopButton;
+    }
+
+    public void setStopButton(JButton stopButton) {
+        this.stopButton = stopButton;
+    }
+
+    public JButton getExitButton() {
+        return exitButton;
+    }
+
+    public void setExitButton(JButton exitButton) {
+        this.exitButton = exitButton;
     }
 }
