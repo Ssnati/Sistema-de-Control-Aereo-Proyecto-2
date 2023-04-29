@@ -24,11 +24,9 @@ public class ManagerGeneral {
     }
 
     private void createMVP() {
-        view = new View();
-        model = new ManagerModel();
         presenter = new Presenter();
-        view.setPresenter(presenter);
-        model.setPresenter(presenter);
+        view = new View(presenter);
+        model = new ManagerModel(presenter);
         presenter.setView(view);
         presenter.setModel(model);
     }

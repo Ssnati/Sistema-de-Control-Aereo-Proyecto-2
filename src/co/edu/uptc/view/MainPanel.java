@@ -1,5 +1,7 @@
 package co.edu.uptc.view;
 
+import co.edu.uptc.pojo.Plane;
+import co.edu.uptc.presenter.Contract;
 import co.edu.uptc.view.game.GamePanel;
 import co.edu.uptc.view.planeConfig.ConfigPanel;
 import co.edu.uptc.view.scoreBoard.ScorePanel;
@@ -8,11 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainPanel extends JPanel {
+    private final Contract.Presenter presenter;
     private GamePanel gamePanel;
     private ConfigPanel configPanel;
     private ScorePanel scorePanel;
 
-    public MainPanel() {
+    public MainPanel(Contract.Presenter presenter) {
+        this.presenter = presenter;
         setLayout(new GridBagLayout());
         setBackground(Color.black);
         initComponents();
@@ -21,7 +25,7 @@ public class MainPanel extends JPanel {
     private void initComponents() {
         gamePanel = new GamePanel();
         configPanel = new ConfigPanel();
-        scorePanel = new ScorePanel();
+        scorePanel = new ScorePanel(presenter);
 
         addComponents();
     }
@@ -57,5 +61,34 @@ public class MainPanel extends JPanel {
         constraints.gridwidth = 1;
         constraints.gridheight = 2;
         add(gamePanel, constraints);
+    }
+
+    public void addPlane(Plane plane) {
+        gamePanel.addPlane(plane);
+        gamePanel.repaint();
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gamePanel = gamePanel;
+    }
+
+    public ConfigPanel getConfigPanel() {
+        return configPanel;
+    }
+
+    public void setConfigPanel(ConfigPanel configPanel) {
+        this.configPanel = configPanel;
+    }
+
+    public ScorePanel getScorePanel() {
+        return scorePanel;
+    }
+
+    public void setScorePanel(ScorePanel scorePanel) {
+        this.scorePanel = scorePanel;
     }
 }

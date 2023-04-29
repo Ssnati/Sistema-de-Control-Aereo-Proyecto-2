@@ -7,6 +7,10 @@ import co.edu.uptc.presenter.Contract;
 public class ManagerModel implements Contract.Model {
     private Contract.Presenter presenter;
 
+    public ManagerModel(Contract.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
     @Override
     public void setPresenter(Contract.Presenter presenter) {
         this.presenter = presenter;
@@ -21,5 +25,10 @@ public class ManagerModel implements Contract.Model {
         coordinate.setX(x);
         coordinate.setY(y);
         return coordinate;
+    }
+
+    @Override
+    public int generateSpeed() {
+        return (int) (Math.random()*10);
     }
 }

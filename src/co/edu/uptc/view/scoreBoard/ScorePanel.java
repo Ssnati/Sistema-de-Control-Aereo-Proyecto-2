@@ -1,5 +1,6 @@
 package co.edu.uptc.view.scoreBoard;
 
+import co.edu.uptc.presenter.Contract;
 import co.edu.uptc.view.Globals;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ScorePanel extends JPanel {
+    private final Contract.Presenter presenter;
     private JLabel flyingPlaneLabel;
     private JLabel arrivedPlaneLabel;
     private JButton startButton;
@@ -15,7 +17,8 @@ public class ScorePanel extends JPanel {
     private JButton stopButton;
     private JButton exitButton;
 
-    public ScorePanel() {
+    public ScorePanel(Contract.Presenter presenter) {
+        this.presenter = presenter;
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(300, 183));
         setBackground(new Color(113, 96, 82));
@@ -46,17 +49,16 @@ public class ScorePanel extends JPanel {
 
     private void addListeners() {
         startButton.addActionListener(e -> {
-            System.out.println("Start button pressed");
+            Thread thread = new Thread(() -> presenter.startGame());
+            thread.start();
         });
         pauseButton.addActionListener(e -> {
             System.out.println("Pause button pressed");
         });
         stopButton.addActionListener(e -> {
-            System.out.println("Stop button pressed");
+            presenter.stopGame();
         });
-        exitButton.addActionListener(e -> {
-            System.out.println("Exit button pressed");
-        });
+        exitButton.addActionListener(e -> System.exit(0));
     }
 
     private void setButtonFeatures(JButton button, Color backgroundColor) {

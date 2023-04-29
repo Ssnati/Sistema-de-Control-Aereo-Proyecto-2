@@ -1,16 +1,17 @@
 package co.edu.uptc.pojo;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Plane {
-    private String urlImage;
+    private Image image;
     private Coordinate coordinates;
     private HitBox hitBox;
     private int speed;
     private Color color;
 
-    public Plane(String urlImage, Coordinate coordinates, HitBox hitBox, int speed, Color color) {
-        this.urlImage = urlImage;
+    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color) {
+        this.image = image;
         this.coordinates = coordinates;
         this.hitBox = hitBox;
         this.speed = speed;
@@ -18,19 +19,19 @@ public class Plane {
     }
 
     public Plane() {
-        urlImage = "";
+        image = new ImageIcon().getImage();
         coordinates = new Coordinate();
         hitBox = new HitBox();
         speed = 0;
-        color = Color.BLACK;
+        color = Color.red;
     }
 
-    public String getUrlImage() {
-        return urlImage;
+    public Image getImage() {
+        return image;
     }
 
-    public void setUrlImage(String urlImage) {
-        this.urlImage = urlImage;
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public Coordinate getCoordinates() {
