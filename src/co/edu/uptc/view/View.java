@@ -4,9 +4,9 @@ import co.edu.uptc.presenter.Contract;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class View extends JFrame implements Contract.View {
-
     private Contract.Presenter presenter;
     private MainPanel mainPanel;
 
