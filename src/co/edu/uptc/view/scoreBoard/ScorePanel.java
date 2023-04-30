@@ -214,4 +214,9 @@ public class ScorePanel extends JPanel {
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
+
+    public void clearPlanes() {
+        setQuantityArrivedPlane(0);
+        setQuantityFlyingPlane(0);
+    }
 }

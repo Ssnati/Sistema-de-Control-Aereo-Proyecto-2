@@ -98,4 +98,10 @@ public class MainPanel extends JPanel {
         configPanel.setProperties(properties);
         scorePanel.setProperties(properties);
     }
+
+    public void clearPlanes() {
+        gamePanel.clearPlanes();
+        scorePanel.clearPlanes();
+        configPanel.clearPlanes();
+    }
 }

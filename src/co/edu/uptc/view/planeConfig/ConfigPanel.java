@@ -121,4 +121,9 @@ public class ConfigPanel extends JPanel {
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
+
+    public void clearPlanes() {
+        colorChooser.setColor(Color.white);
+        speedSlider.setValue(5);
+    }
 }

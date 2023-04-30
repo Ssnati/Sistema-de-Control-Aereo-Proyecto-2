@@ -5,6 +5,7 @@ import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
 
 import java.awt.*;
+import java.util.List;
 import java.util.Properties;
 
 public interface Contract {
@@ -18,6 +19,14 @@ public interface Contract {
         Dimension getDimension();
 
         void setProperties(Properties properties);
+
+        List<Plane> getPlaneList();
+
+        void showNotification(String message);
+
+        boolean getConfirmation(String message);
+
+        void clearPlanes();
     }
 
     public interface Model {
@@ -28,6 +37,8 @@ public interface Contract {
         int generateSpeed();
 
         void setProperties(Properties properties);
+
+        boolean verifyCollision(Plane plane, List<Plane> planeList);
     }
 
     public interface Presenter {

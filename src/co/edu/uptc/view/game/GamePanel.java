@@ -22,7 +22,14 @@ public class GamePanel extends JPanel {
         Graphics2D g = (Graphics2D) graphics;
         super.paintComponent(g);
         drawBackground(g);
+        drawRoad(g);
         drawPlanes(g);
+        g.drawString(".",250,250);
+    }
+
+    private void drawRoad(Graphics2D g) {
+        ImageIcon imageIcon = new ImageIcon(properties.getProperty("RUNWAY_IMAGE_URL"));
+        g.drawImage(imageIcon.getImage(), 250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2, null);
     }
 
     private void drawBackground(Graphics2D g) {
@@ -37,11 +44,24 @@ public class GamePanel extends JPanel {
         }
     }
 
-    public void addPlane(Plane plane){
+    public void addPlane(Plane plane) {
         planes.add(plane);
     }
 
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public List<Plane> getPlanes() {
+        return planes;
+    }
+
+    public void setPlanes(List<Plane> planes) {
+        this.planes = planes;
+    }
+
+    public void clearPlanes() {
+        planes.clear();
+        repaint();
     }
 }

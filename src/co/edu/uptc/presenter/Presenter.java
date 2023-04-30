@@ -1,12 +1,10 @@
 package co.edu.uptc.presenter;
 
-import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.utils.Utils;
 
 import javax.swing.*;
-import java.sql.SQLOutput;
 import java.util.Properties;
 
 public class Presenter implements Contract.Presenter {
@@ -40,10 +38,30 @@ public class Presenter implements Contract.Presenter {
             plane.setHitBox(new HitBox(plane.getImage().getWidth(null), plane.getImage().getHeight(null)));
             plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
             plane.setSpeed(model.generateSpeed());
-            Utils.sleepThread(Integer.parseInt(properties.getProperty("GENERATION_SPEED_IN_SECONDS"))*1000);
+            Utils.sleepThread((int) (Double.parseDouble(properties.getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
             view.addPlane(plane);
             System.out.println("Plane added");
             System.out.println("Plane coordinates: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
+            verifyCollision(plane);
+        }
+        restartGame();
+    }
+
+    private void restartGame() {
+        if (view.getConfirmation("¿Desea reiniciar el juego?")){
+            view.clearPlanes();
+            finishGame = false;
+            startGame();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    private void verifyCollision(Plane plane) {
+        if (model.verifyCollision(plane, view.getPlaneList())) {
+            System.out.println("Collision detected");
+            stopGame();
+            view.showNotification("El juego ha terminado, 2 aviones colisionaron");
         }
     }
 
