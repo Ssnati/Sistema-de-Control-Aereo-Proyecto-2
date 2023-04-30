@@ -104,4 +104,10 @@ public class MainPanel extends JPanel {
         scorePanel.clearPlanes();
         configPanel.clearPlanes();
     }
+
+    public void updateView() {
+        gamePanel.repaint();
+        scorePanel.repaint();
+        configPanel.repaint();
+    }
 }

@@ -27,6 +27,8 @@ public interface Contract {
         boolean getConfirmation(String message);
 
         void clearPlanes();
+
+        void updateView();
     }
 
     interface Model {
@@ -39,6 +41,10 @@ public interface Contract {
         void setProperties(Properties properties);
 
         boolean verifyCollision(Plane plane, List<Plane> planeList);
+
+        void movePlaneToCenter(Plane plane, Dimension dimension);
+
+        int generateUniqueId(List<Plane> planeList);
     }
 
     interface Presenter {
@@ -46,7 +52,7 @@ public interface Contract {
 
         void setView(View view);
 
-        void generatePlanes();
+        void startGame();
 
         void stopGame();
     }

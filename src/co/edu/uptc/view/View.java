@@ -75,4 +75,9 @@ public class View extends JFrame implements Contract.View {
     public void clearPlanes() {
         mainPanel.clearPlanes();
     }
+
+    @Override
+    public void updateView() {
+        mainPanel.updateView();
+    }
 }

@@ -24,7 +24,7 @@ public class GamePanel extends JPanel {
         drawBackground(g);
         drawRoad(g);
         drawPlanes(g);
-        g.drawString(".",250,250);
+        g.drawString(".", 250, 250);
     }
 
     private void drawRoad(Graphics2D g) {
@@ -40,7 +40,7 @@ public class GamePanel extends JPanel {
     private void drawPlanes(Graphics2D g) {
         for (Plane plane : planes) {
             g.setColor(plane.getColor());
-            g.drawImage(plane.getImage(), plane.getCoordinates().getX(), plane.getCoordinates().getY(), null);
+            g.drawImage(plane.getImage(), (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
         }
     }
 

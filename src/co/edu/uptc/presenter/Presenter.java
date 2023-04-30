@@ -5,7 +5,7 @@ import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.utils.Utils;
 
 import javax.swing.*;
-import java.util.Properties;
+import java.util.*;
 
 public class Presenter implements Contract.Presenter {
     private final Properties properties;
@@ -28,37 +28,54 @@ public class Presenter implements Contract.Presenter {
     }
 
     @Override
-    public void generatePlanes() {
-        int panelWidth = view.getDimension().width;
-        int panelHeight = view.getDimension().height;
-        System.out.println(panelHeight + ", " + panelWidth);
-        while (!finishGame) {
-            Plane plane = new Plane();
-            addPlane(plane, panelWidth, panelHeight);
-            verifyCollision(plane);
-        }
-        restartGame();
+    public void startGame() {
+        Thread thread = new Thread(() -> {
+            while (!finishGame) {
+                if (true) {
+                    Plane plane = new Plane();
+                    addPlane(plane, view.getDimension().width, view.getDimension().height);
+                    movePlaneToCenter(plane);
+                    verifyCollision(plane);
+                    Utils.sleepThread((int) (Double.parseDouble(properties.getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
+                }
+            }
+            restartGame();
+        });
+        thread.start();
+    }
+
+    private void movePlaneToCenter(Plane plane) {
+        Thread movementThread = new Thread(() -> {
+            while (!finishGame) {
+                model.movePlaneToCenter(plane, view.getDimension());
+                Utils.sleepThread(1000/plane.getSpeed());
+                view.updateView();
+                verifyCollision(plane);
+            }
+        });
+        movementThread.start();
     }
 
     private void addPlane(Plane plane, int panelWidth, int panelHeight) {
+        view.addPlane(plane);
         plane.setImage(new ImageIcon(properties.getProperty("PLANE_IMAGE_URL")).getImage());
         plane.setHitBox(new HitBox(plane.getImage().getWidth(null), plane.getImage().getHeight(null)));
         plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
         plane.setSpeed(model.generateSpeed());
-        Utils.sleepThread((int) (Double.parseDouble(properties.getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
-        view.addPlane(plane);
-        System.out.println("Plane added");
-        System.out.println("Plane coordinates: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
+        plane.setId(model.generateUniqueId(view.getPlaneList()));
+//        System.out.println("Plane added");
+//        System.out.println("Plane coordinates: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
     }
 
     private void restartGame() {
-        if (view.getConfirmation("¿Desea reiniciar el juego?")){
+        if (view.getConfirmation("¿Desea reiniciar el juego?")) {
             view.clearPlanes();
             finishGame = false;
-            generatePlanes();
+            startGame();
         } else {
             System.exit(0);
         }
+
     }
 
     private void verifyCollision(Plane plane) {

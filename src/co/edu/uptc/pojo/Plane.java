@@ -4,18 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Plane {
+    private int id;
     private Image image;
     private Coordinate coordinates;
     private HitBox hitBox;
     private int speed;
     private Color color;
 
-    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color) {
+    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id) {
         this.image = image;
         this.coordinates = coordinates;
         this.hitBox = hitBox;
         this.speed = speed;
         this.color = color;
+        this.id = id;
     }
 
     public Plane() {
@@ -64,5 +66,13 @@ public class Plane {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
