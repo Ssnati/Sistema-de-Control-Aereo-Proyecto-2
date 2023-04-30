@@ -5,6 +5,7 @@ import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
 
 import java.awt.*;
+import java.util.Properties;
 
 public interface Contract {
     public interface View {
@@ -15,6 +16,8 @@ public interface Contract {
         void addPlane(Plane plane);
 
         Dimension getDimension();
+
+        void setProperties(Properties properties);
     }
 
     public interface Model {
@@ -23,6 +26,8 @@ public interface Contract {
         Coordinate generateCoordinates(HitBox hitBox, int panelWidth, int panelHeight);
 
         int generateSpeed();
+
+        void setProperties(Properties properties);
     }
 
     public interface Presenter {

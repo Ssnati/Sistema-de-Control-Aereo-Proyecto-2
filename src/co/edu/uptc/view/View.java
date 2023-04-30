@@ -5,8 +5,10 @@ import co.edu.uptc.presenter.Contract;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Properties;
 
 public class View extends JFrame implements Contract.View {
+    private Properties properties;
     private Contract.Presenter presenter;
     private MainPanel mainPanel;
 
@@ -44,5 +46,11 @@ public class View extends JFrame implements Contract.View {
     @Override
     public Dimension getDimension() {
         return mainPanel.getGamePanel().getSize();
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+        mainPanel.setProperties(properties);
     }
 }

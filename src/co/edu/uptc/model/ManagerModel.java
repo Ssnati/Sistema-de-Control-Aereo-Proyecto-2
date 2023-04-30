@@ -4,7 +4,10 @@ import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.presenter.Contract;
 
+import java.util.Properties;
+
 public class ManagerModel implements Contract.Model {
+    private Properties properties;
     private Contract.Presenter presenter;
 
     public ManagerModel(Contract.Presenter presenter) {
@@ -30,5 +33,10 @@ public class ManagerModel implements Contract.Model {
     @Override
     public int generateSpeed() {
         return (int) (Math.random()*10);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }

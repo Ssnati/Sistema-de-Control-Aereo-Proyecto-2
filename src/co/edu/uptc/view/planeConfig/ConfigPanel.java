@@ -5,6 +5,7 @@ import co.edu.uptc.view.Globals;
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
+import java.util.Properties;
 
 public class ConfigPanel extends JPanel {
     private JLabel title;
@@ -13,6 +14,7 @@ public class ConfigPanel extends JPanel {
     private JLabel colorLabel;
     private JColorChooser colorChooser;
     private static final Color BACKGROUND_COLOR = new Color(87, 74, 59);
+    private Properties properties;
 
     public ConfigPanel() {
         setLayout(new GridBagLayout());
@@ -114,5 +116,9 @@ public class ConfigPanel extends JPanel {
         gbc.gridwidth = 2;
         gbc.insets = new Insets(0, 0, 0, 0);
         add(colorChooser, gbc);
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }
