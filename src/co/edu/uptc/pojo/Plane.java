@@ -2,6 +2,8 @@ package co.edu.uptc.pojo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Plane {
     private int id;
@@ -10,22 +12,26 @@ public class Plane {
     private HitBox hitBox;
     private int speed;
     private Color color;
+    private List<Coordinate> coordinatesList;
 
-    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id) {
+    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList) {
         this.image = image;
         this.coordinates = coordinates;
         this.hitBox = hitBox;
         this.speed = speed;
         this.color = color;
         this.id = id;
+        this.coordinatesList = coordinatesList;
     }
 
     public Plane() {
+        id = 0;
         image = new ImageIcon().getImage();
         coordinates = new Coordinate();
         hitBox = new HitBox();
         speed = 0;
         color = Color.red;
+        coordinatesList = new ArrayList<>();
     }
 
     public Image getImage() {
@@ -74,5 +80,13 @@ public class Plane {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<Coordinate> getCoordinatesList() {
+        return coordinatesList;
+    }
+
+    public void setCoordinatesList(List<Coordinate> coordinatesList) {
+        this.coordinatesList = coordinatesList;
     }
 }
