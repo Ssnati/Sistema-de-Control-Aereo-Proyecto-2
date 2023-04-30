@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Properties;
 
 public interface Contract {
-    public interface View {
+    interface View {
         void setPresenter(Presenter presenter);
 
-        public void start();
+        void start();
 
         void addPlane(Plane plane);
 
@@ -29,7 +29,7 @@ public interface Contract {
         void clearPlanes();
     }
 
-    public interface Model {
+    interface Model {
         void setPresenter(Presenter presenter);
 
         Coordinate generateCoordinates(HitBox hitBox, int panelWidth, int panelHeight);
@@ -41,12 +41,12 @@ public interface Contract {
         boolean verifyCollision(Plane plane, List<Plane> planeList);
     }
 
-    public interface Presenter {
+    interface Presenter {
         void setModel(Model model);
 
         void setView(View view);
 
-        void startGame();
+        void generatePlanes();
 
         void stopGame();
     }

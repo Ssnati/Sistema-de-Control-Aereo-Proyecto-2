@@ -51,7 +51,7 @@ public class ScorePanel extends JPanel {
 
     private void addListeners() {
         startButton.addActionListener(e -> {
-            Thread thread = new Thread(() -> presenter.startGame());
+            Thread thread = new Thread(presenter::generatePlanes);
             thread.start();
         });
         pauseButton.addActionListener(e -> {

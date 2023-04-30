@@ -28,30 +28,34 @@ public class Presenter implements Contract.Presenter {
     }
 
     @Override
-    public void startGame() {
+    public void generatePlanes() {
         int panelWidth = view.getDimension().width;
         int panelHeight = view.getDimension().height;
         System.out.println(panelHeight + ", " + panelWidth);
         while (!finishGame) {
             Plane plane = new Plane();
-            plane.setImage(new ImageIcon(properties.getProperty("PLANE_IMAGE_URL")).getImage());
-            plane.setHitBox(new HitBox(plane.getImage().getWidth(null), plane.getImage().getHeight(null)));
-            plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
-            plane.setSpeed(model.generateSpeed());
-            Utils.sleepThread((int) (Double.parseDouble(properties.getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
-            view.addPlane(plane);
-            System.out.println("Plane added");
-            System.out.println("Plane coordinates: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
+            addPlane(plane, panelWidth, panelHeight);
             verifyCollision(plane);
         }
         restartGame();
+    }
+
+    private void addPlane(Plane plane, int panelWidth, int panelHeight) {
+        plane.setImage(new ImageIcon(properties.getProperty("PLANE_IMAGE_URL")).getImage());
+        plane.setHitBox(new HitBox(plane.getImage().getWidth(null), plane.getImage().getHeight(null)));
+        plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
+        plane.setSpeed(model.generateSpeed());
+        Utils.sleepThread((int) (Double.parseDouble(properties.getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
+        view.addPlane(plane);
+        System.out.println("Plane added");
+        System.out.println("Plane coordinates: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
     }
 
     private void restartGame() {
         if (view.getConfirmation("¿Desea reiniciar el juego?")){
             view.clearPlanes();
             finishGame = false;
-            startGame();
+            generatePlanes();
         } else {
             System.exit(0);
         }
