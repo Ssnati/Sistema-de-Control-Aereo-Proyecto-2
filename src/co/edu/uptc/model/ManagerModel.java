@@ -63,35 +63,11 @@ public class ManagerModel implements Contract.Model {
         double angle = Math.atan2((double) dimension.height / 2 - y, (double) dimension.width / 2 - x);
         double xOneMove = (Math.cos(angle));
         double yOneMove = (Math.sin(angle));
-        plane.getCoordinates().setX(x + xOneMove);
-        plane.getCoordinates().setY(y + yOneMove);
+        Coordinate coordinate = new Coordinate(x + xOneMove,y + yOneMove);
+        plane.setCoordinates(coordinate);
+        plane.getCoordinatesList().add(coordinate);
         System.out.println("Moviendo avion: " + plane.getId() + " a: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
     }
-
-    private double getYSpeed(Plane plane, double centerY) {
-        double y = plane.getCoordinates().getY();
-        double height = plane.getHitBox().getHeight();
-        double ySpeed = plane.getSpeed();
-        if (y < centerY) {
-            ySpeed = plane.getSpeed();
-        } else if (y > centerY) {
-            ySpeed = -plane.getSpeed();
-        }
-        return ySpeed;
-    }
-
-    private double getXSpeed(Plane plane, double centerX) {
-        double x = plane.getCoordinates().getX();
-        double width = plane.getHitBox().getWidth();
-        double xSpeed = plane.getSpeed();
-        if (x < centerX) {
-            xSpeed = plane.getSpeed();
-        } else if (x > centerX) {
-            xSpeed = -plane.getSpeed();
-        }
-        return xSpeed;
-    }
-
     @Override
     public int generateUniqueId(List<Plane> planeList) {
         int id = 0;

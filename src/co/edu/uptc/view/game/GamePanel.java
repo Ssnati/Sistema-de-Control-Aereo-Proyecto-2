@@ -1,5 +1,6 @@
 package co.edu.uptc.view.game;
 
+import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.Plane;
 
 import javax.swing.*;
@@ -39,8 +40,24 @@ public class GamePanel extends JPanel {
 
     private void drawPlanes(Graphics2D g) {
         for (Plane plane : planes) {
+            drawTail(g, plane);
             g.setColor(plane.getColor());
             g.drawImage(plane.getImage(), (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
+            drawHitBox(g, plane);
+        }
+    }
+
+    private void drawHitBox(Graphics2D g, Plane plane) {
+        g.setColor(Color.white);
+        g.drawRect((int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), plane.getHitBox().getWidth(), plane.getHitBox().getHeight());
+    }
+
+    private void drawTail(Graphics2D g, Plane plane) {
+        g.setColor(Color.white);
+        for (Coordinate coordinate : plane.getCoordinatesList()) {
+            int x = (int) (coordinate.getX() + plane.getHitBox().getWidth() / 2);
+            int y = (int) (coordinate.getY() + plane.getHitBox().getHeight() / 2);
+            g.fillOval(x, y, 2, 2);
         }
     }
 

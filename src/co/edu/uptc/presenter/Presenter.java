@@ -31,7 +31,9 @@ public class Presenter implements Contract.Presenter {
     public void startGame() {
         Thread thread = new Thread(() -> {
             while (!finishGame) {
-                if (true) {
+                boolean listEmpty = view.getPlaneList().size() < 3;
+//                boolean listEmpty = true;
+                if (listEmpty) {
                     Plane plane = new Plane();
                     addPlane(plane, view.getDimension().width, view.getDimension().height);
                     movePlaneToCenter(plane);
