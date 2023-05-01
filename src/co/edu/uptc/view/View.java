@@ -1,5 +1,6 @@
 package co.edu.uptc.view;
 
+import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.presenter.Contract;
 
@@ -7,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class View extends JFrame implements Contract.View {
@@ -79,5 +81,10 @@ public class View extends JFrame implements Contract.View {
     @Override
     public void updateView() {
         mainPanel.updateView();
+    }
+
+    @Override
+    public Map<Integer, List<Coordinate>> getRoutes() {
+        return mainPanel.getGamePanel().getRoutes();
     }
 }

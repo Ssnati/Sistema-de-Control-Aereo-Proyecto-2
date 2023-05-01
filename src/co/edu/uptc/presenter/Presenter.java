@@ -1,5 +1,6 @@
 package co.edu.uptc.presenter;
 
+import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.utils.Utils;
@@ -49,8 +50,15 @@ public class Presenter implements Contract.Presenter {
     private void movePlaneToCenter(Plane plane) {
         Thread movementThread = new Thread(() -> {
             while (!finishGame) {
-                model.movePlaneToCenter(plane, view.getDimension());
-                Utils.sleepThread(1000/plane.getSpeed());
+                if (view.getRoutes().containsKey(plane.getId())) {
+                    List<Coordinate> route = model.followRoute(plane, view.getRoutes().get(plane.getId()));
+                    if (route.isEmpty()){
+                        view.getRoutes().remove(plane.getId());
+                    }
+                } else {
+                    model.movePlaneToCenter(plane, view.getDimension());
+                }
+                Utils.sleepThread(1000 / plane.getSpeed());
                 view.updateView();
                 verifyCollision(plane);
             }

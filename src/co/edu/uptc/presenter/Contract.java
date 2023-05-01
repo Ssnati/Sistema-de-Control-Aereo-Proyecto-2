@@ -6,6 +6,7 @@ import co.edu.uptc.pojo.Plane;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public interface Contract {
@@ -29,6 +30,8 @@ public interface Contract {
         void clearPlanes();
 
         void updateView();
+
+        Map<Integer,List<Coordinate>> getRoutes();
     }
 
     interface Model {
@@ -45,6 +48,8 @@ public interface Contract {
         void movePlaneToCenter(Plane plane, Dimension dimension);
 
         int generateUniqueId(List<Plane> planeList);
+
+        List<Coordinate> followRoute(Plane plane, List<Coordinate> coordinates);
     }
 
     interface Presenter {

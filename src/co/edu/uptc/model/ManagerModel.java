@@ -66,7 +66,7 @@ public class ManagerModel implements Contract.Model {
         Coordinate coordinate = new Coordinate(x + xOneMove,y + yOneMove);
         plane.setCoordinates(coordinate);
         plane.getCoordinatesList().add(coordinate);
-        System.out.println("Moviendo avion: " + plane.getId() + " a: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
+//        System.out.println("Moviendo avion: " + plane.getId() + " a: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
     }
     @Override
     public int generateUniqueId(List<Plane> planeList) {
@@ -76,6 +76,16 @@ public class ManagerModel implements Contract.Model {
             id++;
         }
         return id;
+    }
+
+    @Override
+    public List<Coordinate> followRoute(Plane plane, List<Coordinate> route) {
+        Coordinate coordinate = route.get(0);
+        Coordinate coordinateInMiddle = new Coordinate(coordinate.getX() - (double) plane.getHitBox().getWidth() /2, coordinate.getY() - (double) plane.getHitBox().getHeight() /2);
+        plane.setCoordinates(coordinateInMiddle);
+        plane.getCoordinatesList().add(coordinateInMiddle);
+        route.remove(0);
+        return route;
     }
 
     private boolean planesCrash(Plane plane1, Plane plane2) {

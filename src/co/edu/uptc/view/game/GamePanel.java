@@ -5,45 +5,68 @@ import co.edu.uptc.pojo.Plane;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements MouseMotionListener, MouseListener {
     private List<Plane> planes;
+    private Map<Integer, List<Coordinate>> routes;
     private Properties properties;
+    private Graphics2D g2d;
+    private int planeIdSelected;
 
     public GamePanel() {
         planes = new ArrayList<>();
+        routes = new HashMap<>();
+        planeIdSelected = -1;
         setPreferredSize(new Dimension(500, 500));
+        addMouseMotionListener(this);
+        addMouseListener(this);
     }
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        Graphics2D g = (Graphics2D) graphics;
-        super.paintComponent(g);
-        drawBackground(g);
-        drawRoad(g);
-        drawPlanes(g);
-        g.drawString(".", 250, 250);
+        g2d = (Graphics2D) graphics;
+        super.paintComponent(g2d);
+        drawBackground();
+        drawRoutes();
+        drawRoad();
+        drawPlanes();
+        g2d.drawString(".", 250, 250);
     }
 
-    private void drawRoad(Graphics2D g) {
+    private void drawRoutes() {
+        g2d.setColor(Color.white);
+        for (List<Coordinate> coordinateList : routes.values()) {
+            for (int i = 0; i < coordinateList.size() - 1; i++) {
+                int x = (int) coordinateList.get(i).getX();
+                int y = (int) coordinateList.get(i).getY();
+                int xNext = (int) coordinateList.get(i + 1).getX();
+                int yNext = (int) coordinateList.get(i + 1).getY();
+                g2d.drawLine(x, y, xNext, yNext);
+            }
+        }
+    }
+
+    private void drawRoad() {
         ImageIcon imageIcon = new ImageIcon(properties.getProperty("RUNWAY_IMAGE_URL"));
-        g.drawImage(imageIcon.getImage(), 250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2, null);
+        g2d.drawImage(imageIcon.getImage(), 250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2, null);
     }
 
-    private void drawBackground(Graphics2D g) {
-        g.setColor(Color.black);
-        g.fillRect(0, 0, getWidth(), getHeight());
+    private void drawBackground() {
+        g2d.setColor(Color.black);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    private void drawPlanes(Graphics2D g) {
+    private void drawPlanes() {
         for (Plane plane : planes) {
-            drawTail(g, plane);
-            g.setColor(plane.getColor());
-            g.drawImage(plane.getImage(), (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
-            drawHitBox(g, plane);
+            drawTail(plane);
+            g2d.setColor(plane.getColor());
+            g2d.drawImage(plane.getImage(), (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
+            drawHitBox(g2d, plane);
         }
     }
 
@@ -52,12 +75,17 @@ public class GamePanel extends JPanel {
         g.drawRect((int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), plane.getHitBox().getWidth(), plane.getHitBox().getHeight());
     }
 
-    private void drawTail(Graphics2D g, Plane plane) {
-        g.setColor(Color.white);
-        for (Coordinate coordinate : plane.getCoordinatesList()) {
-            int x = (int) (coordinate.getX() + plane.getHitBox().getWidth() / 2);
-            int y = (int) (coordinate.getY() + plane.getHitBox().getHeight() / 2);
-            g.fillOval(x, y, 2, 2);
+    private void drawTail(Plane plane) {
+        g2d.setColor(Color.white);
+        int xCenter = plane.getHitBox().getWidth() / 2;
+        int yCenter = plane.getHitBox().getHeight() / 2;
+        List<Coordinate> coordinatesList = plane.getCoordinatesList();
+        for (int i = 0; i < coordinatesList.size() - 1; i++) {
+            int x = (int) (coordinatesList.get(i).getX() + xCenter);
+            int y = (int) (coordinatesList.get(i).getY() + yCenter);
+            int xNext = (int) (coordinatesList.get(i + 1).getX() + xCenter);
+            int yNext = (int) (coordinatesList.get(i + 1).getY() + yCenter);
+            g2d.drawLine(x, y, xNext, yNext);
         }
     }
 
@@ -79,6 +107,75 @@ public class GamePanel extends JPanel {
 
     public void clearPlanes() {
         planes.clear();
+        routes.clear();
         repaint();
+    }
+
+    public Map<Integer, List<Coordinate>> getRoutes() {
+        return routes;
+    }
+
+    public void setRoutes(Map<Integer, List<Coordinate>> routes) {
+        this.routes = routes;
+    }
+
+    private Plane getPlaneClicked(MouseEvent e) {
+        for (Plane plane : planes) {
+            if (plane.getCoordinates().getX() <= e.getX() && e.getX() <= plane.getCoordinates().getX() + plane.getHitBox().getWidth()) {
+                if (plane.getCoordinates().getY() <= e.getY() && e.getY() <= plane.getCoordinates().getY() + plane.getHitBox().getHeight()) {
+                    return plane;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (planeIdSelected != -1) {
+            if (routes.containsKey(planeIdSelected)) {
+                routes.get(planeIdSelected).add(new Coordinate(e.getX(), e.getY()));
+            } else {
+                List<Coordinate> coordinates = new ArrayList<>();
+                coordinates.add(new Coordinate(e.getX(), e.getY()));
+                routes.put(planeIdSelected, coordinates);
+            }
+//            System.out.println("Dragged: " + e.getX() + ", " + e.getY());
+            repaint();
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+//        System.out.println("Moved: " + e.getX() + ", " + e.getY());
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        Plane plane = getPlaneClicked(e);
+        if (plane != null) {
+            routes.remove(plane.getId());
+            planeIdSelected = plane.getId();
+        }
+        System.out.println(routes.keySet());
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        planeIdSelected = -1;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
