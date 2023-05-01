@@ -1,5 +1,6 @@
 package co.edu.uptc.presenter;
 
+import co.edu.uptc.model.PropertiesManager;
 import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
@@ -9,13 +10,11 @@ import javax.swing.*;
 import java.util.*;
 
 public class Presenter implements Contract.Presenter {
-    private final Properties properties;
     private Contract.Model model;
     private Contract.View view;
     private boolean finishGame;
 
-    public Presenter(Properties properties) {
-        this.properties = properties;
+    public Presenter() {
     }
 
     @Override
@@ -39,7 +38,7 @@ public class Presenter implements Contract.Presenter {
                     addPlane(plane, view.getDimension().width, view.getDimension().height);
                     movePlaneToCenter(plane);
                     verifyCollision(plane);
-                    Utils.sleepThread((int) (Double.parseDouble(properties.getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
+                    Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
                 }
             }
             restartGame();
@@ -68,7 +67,7 @@ public class Presenter implements Contract.Presenter {
 
     private void addPlane(Plane plane, int panelWidth, int panelHeight) {
         view.addPlane(plane);
-        plane.setImage(new ImageIcon(properties.getProperty("PLANE_IMAGE_URL")).getImage());
+        plane.setImage(new ImageIcon(PropertiesManager.getInstance().getProperty("PLANE_IMAGE_URL")).getImage());
         plane.setHitBox(new HitBox(plane.getImage().getWidth(null), plane.getImage().getHeight(null)));
         plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
         plane.setSpeed(model.generateSpeed());
@@ -99,6 +98,11 @@ public class Presenter implements Contract.Presenter {
     @Override
     public void stopGame() {
         finishGame = true;
+    }
+
+    @Override
+    public void setPlaneToConfigure(Plane plane) {
+        view.setPlaneToConfigure(plane);
     }
 
     private boolean finishGame() {

@@ -8,7 +8,6 @@ import co.edu.uptc.view.scoreBoard.ScorePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Properties;
 
 public class MainPanel extends JPanel {
     private final Contract.Presenter presenter;
@@ -24,10 +23,9 @@ public class MainPanel extends JPanel {
     }
 
     private void initComponents() {
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(presenter);
         configPanel = new ConfigPanel();
         scorePanel = new ScorePanel(presenter);
-
         addComponents();
     }
 
@@ -91,12 +89,6 @@ public class MainPanel extends JPanel {
 
     public void setScorePanel(ScorePanel scorePanel) {
         this.scorePanel = scorePanel;
-    }
-
-    public void setProperties(Properties properties) {
-        gamePanel.setProperties(properties);
-        configPanel.setProperties(properties);
-        scorePanel.setProperties(properties);
     }
 
     public void clearPlanes() {

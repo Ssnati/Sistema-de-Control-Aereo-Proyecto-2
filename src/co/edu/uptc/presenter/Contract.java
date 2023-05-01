@@ -7,7 +7,6 @@ import co.edu.uptc.pojo.Plane;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 public interface Contract {
     interface View {
@@ -19,8 +18,6 @@ public interface Contract {
 
         Dimension getDimension();
 
-        void setProperties(Properties properties);
-
         List<Plane> getPlaneList();
 
         void showNotification(String message);
@@ -31,7 +28,9 @@ public interface Contract {
 
         void updateView();
 
-        Map<Integer,List<Coordinate>> getRoutes();
+        Map<Integer, List<Coordinate>> getRoutes();
+
+        void setPlaneToConfigure(Plane plane);
     }
 
     interface Model {
@@ -40,8 +39,6 @@ public interface Contract {
         Coordinate generateCoordinates(HitBox hitBox, int panelWidth, int panelHeight);
 
         int generateSpeed();
-
-        void setProperties(Properties properties);
 
         boolean verifyCollision(Plane plane, List<Plane> planeList);
 
@@ -60,5 +57,6 @@ public interface Contract {
         void startGame();
 
         void stopGame();
+        void setPlaneToConfigure(Plane plane);
     }
 }

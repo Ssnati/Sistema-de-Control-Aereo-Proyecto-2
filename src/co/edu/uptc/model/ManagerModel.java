@@ -7,10 +7,9 @@ import co.edu.uptc.presenter.Contract;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Properties;
 
 public class ManagerModel implements Contract.Model {
-    private Properties properties;
+
     private Contract.Presenter presenter;
 
     public ManagerModel(Contract.Presenter presenter) {
@@ -35,13 +34,8 @@ public class ManagerModel implements Contract.Model {
 
     @Override
     public int generateSpeed() {
-        int random = (int) (Math.random() * 20);
+        int random = (int) (Math.random() * Integer.parseInt(PropertiesManager.getInstance().getProperty("MAX_SPEED_INT")));
         return random == 0 ? 1 : random;
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        this.properties = properties;
     }
 
     @Override

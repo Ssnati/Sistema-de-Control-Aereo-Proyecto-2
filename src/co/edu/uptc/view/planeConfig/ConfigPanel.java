@@ -1,11 +1,12 @@
 package co.edu.uptc.view.planeConfig;
 
+import co.edu.uptc.model.PropertiesManager;
+import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.view.Globals;
 
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
-import java.util.Properties;
 
 public class ConfigPanel extends JPanel {
     private JLabel title;
@@ -14,7 +15,7 @@ public class ConfigPanel extends JPanel {
     private JLabel colorLabel;
     private JColorChooser colorChooser;
     private static final Color BACKGROUND_COLOR = new Color(87, 74, 59);
-    private Properties properties;
+
 
     public ConfigPanel() {
         setLayout(new GridBagLayout());
@@ -26,7 +27,10 @@ public class ConfigPanel extends JPanel {
     private void initComponents() {
         title = new JLabel("Configuración de aviones");
         speedLabel = new JLabel("Velocidad");
-        speedSlider = new JSlider(1, 10, 5);
+        speedSlider = new JSlider();
+        speedSlider.setMinimum(1);
+        speedSlider.setMaximum(Integer.parseInt(PropertiesManager.getInstance().getProperty("MAX_SPEED_INT")));
+        speedSlider.setValue(speedSlider.getMaximum() / 2);
         colorLabel = new JLabel("Color");
         colorChooser = new JColorChooser();
 
@@ -118,12 +122,13 @@ public class ConfigPanel extends JPanel {
         add(colorChooser, gbc);
     }
 
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-    }
-
     public void clearPlanes() {
         colorChooser.setColor(Color.white);
         speedSlider.setValue(5);
+    }
+
+    public void setPlaneToConfigure(Plane plane) {
+        colorChooser.setColor(plane.getColor());
+        speedSlider.setValue(plane.getSpeed());
     }
 }

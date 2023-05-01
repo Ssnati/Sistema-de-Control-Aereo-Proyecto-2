@@ -1,7 +1,9 @@
 package co.edu.uptc.view.game;
 
+import co.edu.uptc.model.PropertiesManager;
 import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.Plane;
+import co.edu.uptc.presenter.Contract;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,11 +16,13 @@ import java.util.*;
 public class GamePanel extends JPanel implements MouseMotionListener, MouseListener {
     private List<Plane> planes;
     private Map<Integer, List<Coordinate>> routes;
-    private Properties properties;
+
     private Graphics2D g2d;
     private int planeIdSelected;
+    private Contract.Presenter presenter;
 
-    public GamePanel() {
+    public GamePanel(Contract.Presenter presenter) {
+        this.presenter = presenter;
         planes = new ArrayList<>();
         routes = new HashMap<>();
         planeIdSelected = -1;
@@ -52,7 +56,7 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     }
 
     private void drawRoad() {
-        ImageIcon imageIcon = new ImageIcon(properties.getProperty("RUNWAY_IMAGE_URL"));
+        ImageIcon imageIcon = new ImageIcon(PropertiesManager.getInstance().getProperty("RUNWAY_IMAGE_URL"));
         g2d.drawImage(imageIcon.getImage(), 250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2, null);
     }
 
@@ -91,10 +95,6 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
 
     public void addPlane(Plane plane) {
         planes.add(plane);
-    }
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
     }
 
     public List<Plane> getPlanes() {
@@ -146,19 +146,17 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-//        System.out.println("Moved: " + e.getX() + ", " + e.getY());
-    }
+    public void mouseMoved(MouseEvent e) {}
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
         Plane plane = getPlaneClicked(e);
         if (plane != null) {
             routes.remove(plane.getId());
+            presenter.setPlaneToConfigure(plane);
             planeIdSelected = plane.getId();
         }
         System.out.println(routes.keySet());
@@ -170,12 +168,8 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    public void mouseExited(MouseEvent e) {}
 }

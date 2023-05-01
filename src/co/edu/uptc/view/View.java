@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class View extends JFrame implements Contract.View {
-    private Properties properties;
+
     private Contract.Presenter presenter;
     private MainPanel mainPanel;
 
@@ -51,13 +51,6 @@ public class View extends JFrame implements Contract.View {
     public Dimension getDimension() {
         return mainPanel.getGamePanel().getSize();
     }
-
-    @Override
-    public void setProperties(Properties properties) {
-        this.properties = properties;
-        mainPanel.setProperties(properties);
-    }
-
     @Override
     public List<Plane> getPlaneList() {
         return mainPanel.getGamePanel().getPlanes();
@@ -86,5 +79,10 @@ public class View extends JFrame implements Contract.View {
     @Override
     public Map<Integer, List<Coordinate>> getRoutes() {
         return mainPanel.getGamePanel().getRoutes();
+    }
+
+    @Override
+    public void setPlaneToConfigure(Plane plane) {
+        mainPanel.getConfigPanel().setPlaneToConfigure(plane);
     }
 }

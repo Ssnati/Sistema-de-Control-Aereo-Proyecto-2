@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Properties;
 
 public class ScorePanel extends JPanel {
     private final Contract.Presenter presenter;
@@ -17,7 +16,7 @@ public class ScorePanel extends JPanel {
     private JButton pauseButton;
     private JButton stopButton;
     private JButton exitButton;
-    private Properties properties;
+
 
     public ScorePanel(Contract.Presenter presenter) {
         this.presenter = presenter;
@@ -209,10 +208,6 @@ public class ScorePanel extends JPanel {
 
     public void setExitButton(JButton exitButton) {
         this.exitButton = exitButton;
-    }
-
-    public void setProperties(Properties properties) {
-        this.properties = properties;
     }
 
     public void clearPlanes() {
