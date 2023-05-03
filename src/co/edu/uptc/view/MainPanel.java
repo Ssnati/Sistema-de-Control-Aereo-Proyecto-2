@@ -8,6 +8,7 @@ import co.edu.uptc.view.scoreBoard.ScorePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class MainPanel extends JPanel {
     private final Contract.Presenter presenter;
@@ -62,11 +63,6 @@ public class MainPanel extends JPanel {
         add(gamePanel, constraints);
     }
 
-    public void addPlane(Plane plane) {
-        gamePanel.addPlane(plane);
-        gamePanel.repaint();
-    }
-
     public GamePanel getGamePanel() {
         return gamePanel;
     }
@@ -97,7 +93,8 @@ public class MainPanel extends JPanel {
         configPanel.clearPlanes();
     }
 
-    public void updateView() {
+    public void updateView(List<Plane> planes) {
+        gamePanel.setPlanes(planes);
         gamePanel.repaint();
         scorePanel.repaint();
         configPanel.repaint();

@@ -13,8 +13,9 @@ public class Plane {
     private int speed;
     private Color color;
     private List<Coordinate> coordinatesList;
+    private List<Coordinate> route;
 
-    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList) {
+    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList, List<Coordinate> route) {
         this.image = image;
         this.coordinates = coordinates;
         this.hitBox = hitBox;
@@ -22,6 +23,7 @@ public class Plane {
         this.color = color;
         this.id = id;
         this.coordinatesList = coordinatesList;
+        this.route = route;
     }
 
     public Plane() {
@@ -32,6 +34,7 @@ public class Plane {
         speed = 0;
         color = Color.red;
         coordinatesList = new ArrayList<>();
+        route = new ArrayList<>();
     }
 
     public Image getImage() {
@@ -88,5 +91,13 @@ public class Plane {
 
     public void setCoordinatesList(List<Coordinate> coordinatesList) {
         this.coordinatesList = coordinatesList;
+    }
+
+    public List<Coordinate> getRoute() {
+        return route;
+    }
+
+    public void setRoute(List<Coordinate> route) {
+        this.route = route;
     }
 }

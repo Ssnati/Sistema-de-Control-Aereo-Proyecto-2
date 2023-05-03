@@ -6,15 +6,12 @@ import co.edu.uptc.pojo.Plane;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
 
 public interface Contract {
     interface View {
         void setPresenter(Presenter presenter);
 
         void start();
-
-        void addPlane(Plane plane);
 
         Dimension getDimension();
 
@@ -26,9 +23,7 @@ public interface Contract {
 
         void clearPlanes();
 
-        void updateView();
-
-        Map<Integer, List<Coordinate>> getRoutes();
+        void updateView(List<Plane> planes);
 
         void setPlaneToConfigure(Plane plane);
     }
@@ -42,13 +37,23 @@ public interface Contract {
 
         boolean verifyCollision(Plane plane, List<Plane> planeList);
 
-        void movePlaneToCenter(Plane plane, Dimension dimension);
+        void movePlaneToCenter(Plane plane, int gameWidth, int gameHeight);
 
         int generateUniqueId(List<Plane> planeList);
 
         List<Coordinate> followRoute(Plane plane, List<Coordinate> coordinates);
 
         void verifyPlaneArrived(Plane plane);
+
+        void addPlane(Plane plane, int panelWidth, int panelHeight);
+
+        void startGame();
+
+        Plane searchPlane(int xPos, int yPos);
+
+        Plane searchPlane(int id);
+
+        void addCoordinateToRoute(int planeIdSelected, int x, int y);
     }
 
     interface Presenter {
@@ -59,6 +64,20 @@ public interface Contract {
         void startGame();
 
         void stopGame();
-        void setPlaneToConfigure(Plane plane);
+        void setPlaneToConfigure(int idPlane);
+
+        boolean gameHasFinished();
+
+        int getGameWidth();
+        int getGameHeight();
+        void updateView(List<Plane> planes);
+
+        Plane searchPlane(int xPos, int yPos);
+        Plane searchPlane(int id);
+        void showNotification(String message);
+
+        void removeRoute(int id);
+
+        void addCoordinateToRoute(int planeIdSelected, int x, int y);
     }
 }

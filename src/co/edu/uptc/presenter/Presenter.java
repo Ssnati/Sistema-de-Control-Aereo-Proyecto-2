@@ -1,13 +1,9 @@
 package co.edu.uptc.presenter;
 
-import co.edu.uptc.model.PropertiesManager;
-import co.edu.uptc.pojo.Coordinate;
-import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
-import co.edu.uptc.utils.Utils;
 
-import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Presenter implements Contract.Presenter {
     private Contract.Model model;
@@ -29,54 +25,7 @@ public class Presenter implements Contract.Presenter {
 
     @Override
     public void startGame() {
-        Thread thread = new Thread(() -> {
-            while (!finishGame) {
-                boolean listEmpty = view.getPlaneList().size() < 3;
-//                boolean listEmpty = true;
-                if (listEmpty) {
-                    Plane plane = new Plane();
-                    addPlane(plane, view.getDimension().width, view.getDimension().height);
-                    movePlaneToCenter(plane);
-                    verifyCollision(plane);
-                    Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
-                }
-            }
-            restartGame();
-        });
-        thread.start();
-    }
-
-    private void movePlaneToCenter(Plane plane) {
-        Thread movementThread = new Thread(() -> {
-            while (!finishGame) {
-                if (view.getRoutes().containsKey(plane.getId())) {
-                    List<Coordinate> route = model.followRoute(plane, view.getRoutes().get(plane.getId()));
-                    if (route.isEmpty()){
-                        view.getRoutes().remove(plane.getId());
-                    }
-                } else {
-                    model.movePlaneToCenter(plane, view.getDimension());
-                }
-                Utils.sleepThread(1000 / plane.getSpeed());
-                view.updateView();
-                verifyCollision(plane);
-                verifyPlaneArrived(plane);
-            }
-        });
-        movementThread.start();
-    }
-
-    private void verifyPlaneArrived(Plane plane) {
-        model.verifyPlaneArrived(plane);
-    }
-
-    private void addPlane(Plane plane, int panelWidth, int panelHeight) {
-        view.addPlane(plane);
-        plane.setImage(new ImageIcon(PropertiesManager.getInstance().getProperty("PLANE_IMAGE_URL")).getImage());
-        plane.setHitBox(new HitBox(plane.getImage().getWidth(null), plane.getImage().getHeight(null)));
-        plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
-        plane.setSpeed(model.generateSpeed());
-        plane.setId(model.generateUniqueId(view.getPlaneList()));
+        model.startGame();
     }
 
     private void restartGame() {
@@ -89,23 +38,59 @@ public class Presenter implements Contract.Presenter {
         }
 
     }
-
-    private void verifyCollision(Plane plane) {
-        if (model.verifyCollision(plane, view.getPlaneList())) {
-            System.out.println("Collision detected");
-            stopGame();
-            view.showNotification("El juego ha terminado, 2 aviones colisionaron");
-        }
-    }
-
     @Override
     public void stopGame() {
         finishGame = true;
     }
 
     @Override
-    public void setPlaneToConfigure(Plane plane) {
-        view.setPlaneToConfigure(plane);
+    public void setPlaneToConfigure(int idPlane) {
+        view.setPlaneToConfigure(model.searchPlane(idPlane));
+    }
+
+    @Override
+    public boolean gameHasFinished() {
+        return finishGame;
+    }
+
+    @Override
+    public int getGameWidth() {
+        return view.getDimension().width;
+    }
+
+    @Override
+    public int getGameHeight() {
+        return view.getDimension().height;
+    }
+
+    @Override
+    public void updateView(List<Plane> planes) {
+        view.updateView(planes);
+    }
+
+    @Override
+    public Plane searchPlane(int xPos, int yPos) {
+        return model.searchPlane(xPos, yPos);
+    }
+
+    @Override
+    public Plane searchPlane(int id) {
+        return model.searchPlane(id);
+    }
+
+    @Override
+    public void showNotification(String message) {
+        view.showNotification(message);
+    }
+
+    @Override
+    public void removeRoute(int id) {
+        model.searchPlane(id).setRoute(new ArrayList<>());
+    }
+
+    @Override
+    public void addCoordinateToRoute(int planeIdSelected, int x, int y) {
+        model.addCoordinateToRoute(planeIdSelected, x, y);
     }
 
     private boolean finishGame() {

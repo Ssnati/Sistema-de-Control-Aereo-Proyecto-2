@@ -15,7 +15,6 @@ import java.util.*;
 
 public class GamePanel extends JPanel implements MouseMotionListener, MouseListener {
     private List<Plane> planes;
-    private Map<Integer, List<Coordinate>> routes;
     private Graphics2D g2d;
     private int planeIdSelected;
     private Contract.Presenter presenter;
@@ -23,7 +22,6 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     public GamePanel(Contract.Presenter presenter) {
         this.presenter = presenter;
         planes = new ArrayList<>();
-        routes = new HashMap<>();
         planeIdSelected = -1;
         setPreferredSize(new Dimension(500, 500));
         addMouseMotionListener(this);
@@ -35,22 +33,20 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
         g2d = (Graphics2D) graphics;
         super.paintComponent(g2d);
         drawBackground();
-        drawRoutes();
         drawRoad();
         drawPlanes();
         g2d.drawString(".", 250, 250);
     }
 
-    private void drawRoutes() {
+    private void drawRoute(Plane plane) {
         g2d.setColor(Color.white);
-        for (List<Coordinate> coordinateList : routes.values()) {
-            for (int i = 0; i < coordinateList.size() - 1; i++) {
-                int x = (int) coordinateList.get(i).getX();
-                int y = (int) coordinateList.get(i).getY();
-                int xNext = (int) coordinateList.get(i + 1).getX();
-                int yNext = (int) coordinateList.get(i + 1).getY();
-                g2d.drawLine(x, y, xNext, yNext);
-            }
+        List<Coordinate> coordinateList = plane.getRoute();
+        for (int i = 0; i < coordinateList.size() - 1; i++) {
+            int x = (int) coordinateList.get(i).getX();
+            int y = (int) coordinateList.get(i).getY();
+            int xNext = (int) coordinateList.get(i + 1).getX();
+            int yNext = (int) coordinateList.get(i + 1).getY();
+            g2d.drawLine(x, y, xNext, yNext);
         }
     }
 
@@ -67,6 +63,7 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     private void drawPlanes() {
         for (Plane plane : planes) {
             drawTail(plane);
+            if (plane.getRoute().size() > 0) drawRoute(plane);
             g2d.setColor(plane.getColor());
             g2d.drawImage(plane.getImage(), (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
             drawHitBox(g2d, plane);
@@ -92,10 +89,6 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
         }
     }
 
-    public void addPlane(Plane plane) {
-        planes.add(plane);
-    }
-
     public List<Plane> getPlanes() {
         return planes;
     }
@@ -105,40 +98,19 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     }
 
     public void clearPlanes() {
-        planes.clear();
-        routes.clear();
+        planes = new ArrayList<>();
         repaint();
     }
 
-    public Map<Integer, List<Coordinate>> getRoutes() {
-        return routes;
-    }
-
-    public void setRoutes(Map<Integer, List<Coordinate>> routes) {
-        this.routes = routes;
-    }
-
     private Plane getPlaneClicked(MouseEvent e) {
-        for (Plane plane : planes) {
-            if (plane.getCoordinates().getX() <= e.getX() && e.getX() <= plane.getCoordinates().getX() + plane.getHitBox().getWidth()) {
-                if (plane.getCoordinates().getY() <= e.getY() && e.getY() <= plane.getCoordinates().getY() + plane.getHitBox().getHeight()) {
-                    return plane;
-                }
-            }
-        }
-        return null;
+        return presenter.searchPlane(e.getX(), e.getY());
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         if (planeIdSelected != -1) {
-            if (routes.containsKey(planeIdSelected)) {
-                routes.get(planeIdSelected).add(new Coordinate(e.getX(), e.getY()));
-            } else {
-                List<Coordinate> coordinates = new ArrayList<>();
-                coordinates.add(new Coordinate(e.getX(), e.getY()));
-                routes.put(planeIdSelected, coordinates);
-            }
+            presenter.addCoordinateToRoute(planeIdSelected, e.getX(), e.getY());
+            System.out.println("X: " + e.getX() + " Y: " + e.getY());
             repaint();
         }
     }
@@ -155,11 +127,10 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     public void mousePressed(MouseEvent e) {
         Plane plane = getPlaneClicked(e);
         if (plane != null) {
-            routes.remove(plane.getId());
-            presenter.setPlaneToConfigure(plane);
+            presenter.removeRoute(plane.getId());
             planeIdSelected = plane.getId();
+            presenter.setPlaneToConfigure(planeIdSelected);
         }
-        System.out.println(routes.keySet());
     }
 
     @Override

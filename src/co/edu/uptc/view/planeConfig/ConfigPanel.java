@@ -75,6 +75,7 @@ public class ConfigPanel extends JPanel {
             if (!source.getValueIsAdjusting()) {
                 int speed = source.getValue();
                 planeSelected.setSpeed(speed);
+//                presenter.setPlaneSpeed(planeSelected, speed);
                 System.out.println(speed);
             }
         });
