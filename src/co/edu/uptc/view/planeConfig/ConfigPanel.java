@@ -15,6 +15,7 @@ public class ConfigPanel extends JPanel {
     private JLabel colorLabel;
     private JColorChooser colorChooser;
     private static final Color BACKGROUND_COLOR = new Color(87, 74, 59);
+    private Plane planeSelected;
 
 
     public ConfigPanel() {
@@ -69,6 +70,14 @@ public class ConfigPanel extends JPanel {
         speedSlider.setPaintLabels(true);
         speedSlider.setBackground(BACKGROUND_COLOR);
         speedSlider.setForeground(Color.white);
+        speedSlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            if (!source.getValueIsAdjusting()) {
+                int speed = source.getValue();
+                planeSelected.setSpeed(speed);
+                System.out.println(speed);
+            }
+        });
     }
 
     private void addComponents() {
@@ -128,6 +137,7 @@ public class ConfigPanel extends JPanel {
     }
 
     public void setPlaneToConfigure(Plane plane) {
+        planeSelected = plane;
         colorChooser.setColor(plane.getColor());
         speedSlider.setValue(plane.getSpeed());
     }

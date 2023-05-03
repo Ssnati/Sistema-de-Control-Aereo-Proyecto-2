@@ -60,9 +60,14 @@ public class Presenter implements Contract.Presenter {
                 Utils.sleepThread(1000 / plane.getSpeed());
                 view.updateView();
                 verifyCollision(plane);
+                verifyPlaneArrived(plane);
             }
         });
         movementThread.start();
+    }
+
+    private void verifyPlaneArrived(Plane plane) {
+        model.verifyPlaneArrived(plane);
     }
 
     private void addPlane(Plane plane, int panelWidth, int panelHeight) {
@@ -72,8 +77,6 @@ public class Presenter implements Contract.Presenter {
         plane.setCoordinates(model.generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
         plane.setSpeed(model.generateSpeed());
         plane.setId(model.generateUniqueId(view.getPlaneList()));
-//        System.out.println("Plane added");
-//        System.out.println("Plane coordinates: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
     }
 
     private void restartGame() {

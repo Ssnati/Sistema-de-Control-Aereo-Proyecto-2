@@ -16,7 +16,6 @@ import java.util.*;
 public class GamePanel extends JPanel implements MouseMotionListener, MouseListener {
     private List<Plane> planes;
     private Map<Integer, List<Coordinate>> routes;
-
     private Graphics2D g2d;
     private int planeIdSelected;
     private Contract.Presenter presenter;
@@ -140,16 +139,17 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
                 coordinates.add(new Coordinate(e.getX(), e.getY()));
                 routes.put(planeIdSelected, coordinates);
             }
-//            System.out.println("Dragged: " + e.getX() + ", " + e.getY());
             repaint();
         }
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {
+    }
 
     @Override
-    public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -168,8 +168,10 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+    }
 
     @Override
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+    }
 }

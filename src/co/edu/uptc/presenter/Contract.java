@@ -47,6 +47,8 @@ public interface Contract {
         int generateUniqueId(List<Plane> planeList);
 
         List<Coordinate> followRoute(Plane plane, List<Coordinate> coordinates);
+
+        void verifyPlaneArrived(Plane plane);
     }
 
     interface Presenter {

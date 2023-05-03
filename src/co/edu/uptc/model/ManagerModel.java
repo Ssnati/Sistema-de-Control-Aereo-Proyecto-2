@@ -60,7 +60,6 @@ public class ManagerModel implements Contract.Model {
         Coordinate coordinate = new Coordinate(x + xOneMove,y + yOneMove);
         plane.setCoordinates(coordinate);
         plane.getCoordinatesList().add(coordinate);
-//        System.out.println("Moviendo avion: " + plane.getId() + " a: " + plane.getCoordinates().getX() + ", " + plane.getCoordinates().getY());
     }
     @Override
     public int generateUniqueId(List<Plane> planeList) {
@@ -80,6 +79,11 @@ public class ManagerModel implements Contract.Model {
         plane.getCoordinatesList().add(coordinateInMiddle);
         route.remove(0);
         return route;
+    }
+
+    @Override
+    public void verifyPlaneArrived(Plane plane) {
+
     }
 
     private boolean planesCrash(Plane plane1, Plane plane2) {
