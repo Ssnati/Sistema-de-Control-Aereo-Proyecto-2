@@ -30,7 +30,8 @@ public class ScorePanel extends JPanel {
         flyingPlaneLabel = new JLabel("Aviones volando: 0");
         arrivedPlaneLabel = new JLabel("Aviones aterrizados: 0");
         startButton = new JButton("Iniciar");
-        pauseButton = new JButton("Pausar");
+        ImageIcon pauseIcon = new ImageIcon("src/resources/assets/Play_and_pause.png");
+        pauseButton = new JButton(new ImageIcon(pauseIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         stopButton = new JButton("Detener");
         exitButton = new JButton("Salir");
 
@@ -54,7 +55,8 @@ public class ScorePanel extends JPanel {
             thread.start();
         });
         pauseButton.addActionListener(e -> {
-            System.out.println("Pause button pressed");
+            presenter.pauseAndContinue();
+            System.out.println("Game paused: " + presenter.gameIsPaused());
         });
         stopButton.addActionListener(e -> {
             presenter.stopGame();

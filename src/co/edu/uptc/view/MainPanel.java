@@ -25,7 +25,7 @@ public class MainPanel extends JPanel {
 
     private void initComponents() {
         gamePanel = new GamePanel(presenter);
-        configPanel = new ConfigPanel();
+        configPanel = new ConfigPanel(presenter);
         scorePanel = new ScorePanel(presenter);
         addComponents();
     }
@@ -95,6 +95,7 @@ public class MainPanel extends JPanel {
 
     public void updateView(List<Plane> planes) {
         gamePanel.setPlanes(planes);
+        scorePanel.setQuantityFlyingPlane(planes.size());
         gamePanel.repaint();
         scorePanel.repaint();
         configPanel.repaint();

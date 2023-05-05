@@ -2,6 +2,7 @@ package co.edu.uptc.view.planeConfig;
 
 import co.edu.uptc.model.PropertiesManager;
 import co.edu.uptc.pojo.Plane;
+import co.edu.uptc.presenter.Contract;
 import co.edu.uptc.view.Globals;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 
 public class ConfigPanel extends JPanel {
+    private Contract.Presenter presenter;
     private JLabel title;
     private JLabel speedLabel;
     private JSlider speedSlider;
@@ -18,7 +20,8 @@ public class ConfigPanel extends JPanel {
     private Plane planeSelected;
 
 
-    public ConfigPanel() {
+    public ConfigPanel(Contract.Presenter presenter) {
+        this.presenter = presenter;
         setLayout(new GridBagLayout());
         setPreferredSize(new Dimension(300, 317));
         setBackground(BACKGROUND_COLOR);
@@ -74,8 +77,7 @@ public class ConfigPanel extends JPanel {
             JSlider source = (JSlider) e.getSource();
             if (!source.getValueIsAdjusting()) {
                 int speed = source.getValue();
-                planeSelected.setSpeed(speed);
-//                presenter.setPlaneSpeed(planeSelected, speed);
+                presenter.setPlaneSpeed(planeSelected.getId(), speed);
                 System.out.println(speed);
             }
         });

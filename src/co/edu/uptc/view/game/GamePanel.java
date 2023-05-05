@@ -110,7 +110,6 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     public void mouseDragged(MouseEvent e) {
         if (planeIdSelected != -1) {
             presenter.addCoordinateToRoute(planeIdSelected, e.getX(), e.getY());
-            System.out.println("X: " + e.getX() + " Y: " + e.getY());
             repaint();
         }
     }

@@ -9,6 +9,7 @@ public class Presenter implements Contract.Presenter {
     private Contract.Model model;
     private Contract.View view;
     private boolean finishGame;
+    private boolean pauseGame;
 
     public Presenter() {
     }
@@ -38,6 +39,7 @@ public class Presenter implements Contract.Presenter {
         }
 
     }
+
     @Override
     public void stopGame() {
         finishGame = true;
@@ -93,7 +95,18 @@ public class Presenter implements Contract.Presenter {
         model.addCoordinateToRoute(planeIdSelected, x, y);
     }
 
-    private boolean finishGame() {
-        return false;
+    @Override
+    public void pauseAndContinue() {
+        pauseGame = !pauseGame;
+    }
+
+    @Override
+    public boolean gameIsPaused() {
+        return pauseGame;
+    }
+
+    @Override
+    public void setPlaneSpeed(int planeSelectedId, int speed) {
+        model.searchPlane(planeSelectedId).setSpeed(speed);
     }
 }

@@ -69,16 +69,17 @@ public class ManagerModel implements Contract.Model {
     private void startMovementThread(Plane plane, int gameWidth, int gameHeight) {
         Thread movementTread = new Thread(() -> {
             while (!presenter.gameHasFinished()) {
-                if (plane.getRoute().size() > 0) {
-                    plane.setRoute(followRoute(plane, plane.getRoute()));
-                } else {
-                    movePlaneToCenter(plane, gameWidth, gameHeight);
-                }
-                Utils.sleepThread(1000 / plane.getSpeed());
-                presenter.updateView(planes);
-                gameEnded(plane);
-                verifyPlaneArrived(plane);
-//                System.out.println("Plane " + plane.getId() + " is in " + plane.getCoordinates().getX() + " " + plane.getCoordinates().getY());
+//                if(!presenter.isPauseGame()){
+                    if (plane.getRoute().size() > 0) {
+                        plane.setRoute(followRoute(plane, plane.getRoute()));
+                    } else {
+                        movePlaneToCenter(plane, gameWidth, gameHeight);
+                    }
+                    Utils.sleepThread(1000 / plane.getSpeed());
+                    presenter.updateView(planes);
+                    gameEnded(plane);
+                    verifyPlaneArrived(plane);
+//                }
             }
         });
         movementTread.start();
@@ -123,21 +124,26 @@ public class ManagerModel implements Contract.Model {
     public void startGame() {
         Thread thread = new Thread(() -> {
             while (!presenter.gameHasFinished()) {
-                boolean listEmpty = planes.size() < 3;
+//                System.out.println("Esta pausado: " + !presenter.gameIsPaused());
+//                if(!presenter.gameIsPaused()){
+//                    System.out.println("Se ha iniciado el juego" + presenter.gameIsPaused());
+                    boolean listEmpty = planes.size() < 3;
 //                boolean listEmpty = true;
-                if (listEmpty) {
-                    Plane plane = new Plane();
-                    int gameWidth = presenter.getGameWidth();
-                    int gameHeight = presenter.getGameHeight();
-                    addPlane(plane, gameWidth, gameHeight);
-                    System.out.println("Se ha creado un nuevo avion: " + plane.getId());
-                    presenter.updateView(planes);
-                    startMovementThread(plane, gameWidth, gameHeight);
-                    gameEnded(plane);
-                    Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
+                    if (listEmpty) {
+                        Plane plane = new Plane();
+                        int gameWidth = presenter.getGameWidth();
+                        int gameHeight = presenter.getGameHeight();
+                        addPlane(plane, gameWidth, gameHeight);
+                        System.out.println("Se ha creado un nuevo avion: " + plane.getId());
+                        presenter.updateView(planes);
+                        startMovementThread(plane, gameWidth, gameHeight);
+                        gameEnded(plane);
+                        Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
 //                    presenter.updateView(planes);
+                    }
+                    presenter.updateView(planes);
                 }
-            }
+//            }
         });
         thread.start();
     }

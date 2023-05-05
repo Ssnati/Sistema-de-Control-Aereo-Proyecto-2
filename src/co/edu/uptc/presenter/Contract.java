@@ -79,5 +79,11 @@ public interface Contract {
         void removeRoute(int id);
 
         void addCoordinateToRoute(int planeIdSelected, int x, int y);
+
+        void pauseAndContinue();
+
+        boolean gameIsPaused();
+
+        void setPlaneSpeed(int planeSelectedId, int speed);
     }
 }
