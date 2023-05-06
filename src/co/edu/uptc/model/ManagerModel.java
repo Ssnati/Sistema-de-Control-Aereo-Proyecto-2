@@ -1,5 +1,6 @@
 package co.edu.uptc.model;
 
+import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
@@ -14,10 +15,23 @@ public class ManagerModel implements Contract.Model {
 
     private Contract.Presenter presenter;
     private List<Plane> planes;
+    private Airstrip airstrip;
+    private int planesArrived;
 
     public ManagerModel(Contract.Presenter presenter) {
         this.presenter = presenter;
         planes = new ArrayList<>();
+        airstrip = new Airstrip();
+    }
+
+    private Airstrip defaultAirstrip() {
+        Airstrip airstrip = new Airstrip();
+        airstrip.setImage(new ImageIcon(PropertiesManager.getInstance().getProperty("AIRSTRIP_IMAGE_URL")).getImage());
+        airstrip.setHitBox(new HitBox(airstrip.getImage().getWidth(null), airstrip.getImage().getHeight(null)));
+        double x = (double) (presenter.getGameWidth() - airstrip.getHitBox().getWidth()) / 2;
+        double y = (double) (presenter.getGameHeight() + airstrip.getHitBox().getHeight()) / 2;
+        airstrip.setCoordinate(new Coordinate(x, y));
+        return airstrip;
     }
 
     @Override
@@ -68,19 +82,19 @@ public class ManagerModel implements Contract.Model {
 
     private void startMovementThread(Plane plane, int gameWidth, int gameHeight) {
         Thread movementTread = new Thread(() -> {
-            while (!presenter.gameHasFinished()) {
+            while (!(presenter.gameHasFinished() || verifyPlaneArrived(plane))) {
 //                if(!presenter.isPauseGame()){
-                    if (plane.getRoute().size() > 0) {
-                        plane.setRoute(followRoute(plane, plane.getRoute()));
-                    } else {
-                        movePlaneToCenter(plane, gameWidth, gameHeight);
-                    }
-                    Utils.sleepThread(1000 / plane.getSpeed());
-                    presenter.updateView(planes);
-                    gameEnded(plane);
-                    verifyPlaneArrived(plane);
+                if (plane.getRoute().size() > 0) {
+                    plane.setRoute(followRoute(plane, plane.getRoute()));
+                } else {
+                    movePlaneToCenter(plane, gameWidth, gameHeight);
+                }
+                Utils.sleepThread(1000 / plane.getSpeed());
+                presenter.updateView();
+                gameEnded(plane);
 //                }
             }
+            presenter.updateView();
         });
         movementTread.start();
     }
@@ -106,8 +120,18 @@ public class ManagerModel implements Contract.Model {
     }
 
     @Override
-    public void verifyPlaneArrived(Plane plane) {
-
+    public boolean verifyPlaneArrived(Plane plane) {
+        double xplane = plane.getCoordinates().getX();
+        double yplane = plane.getCoordinates().getY();
+        double xairstrip = airstrip.getCoordinate().getX();
+        double yairstrip = airstrip.getCoordinate().getY();
+        boolean isInrange = xplane >= xairstrip && xplane <= xairstrip + airstrip.getHitBox().getWidth() && yplane >= yairstrip && yplane <= yairstrip + airstrip.getHitBox().getHeight();
+        if (isInrange) {
+//            plane.setArrived(true);
+            planes.remove(searchPlane(plane.getId()));
+            planesArrived++;
+        }
+        return isInrange;
     }
 
     @Override
@@ -122,27 +146,28 @@ public class ManagerModel implements Contract.Model {
 
     @Override
     public void startGame() {
+//        airstrip.setCoordinate(new Coordinate(250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2));
         Thread thread = new Thread(() -> {
             while (!presenter.gameHasFinished()) {
 //                System.out.println("Esta pausado: " + !presenter.gameIsPaused());
 //                if(!presenter.gameIsPaused()){
 //                    System.out.println("Se ha iniciado el juego" + presenter.gameIsPaused());
-                    boolean listEmpty = planes.size() < 3;
+                boolean listEmpty = planes.size() < 3;
 //                boolean listEmpty = true;
-                    if (listEmpty) {
-                        Plane plane = new Plane();
-                        int gameWidth = presenter.getGameWidth();
-                        int gameHeight = presenter.getGameHeight();
-                        addPlane(plane, gameWidth, gameHeight);
-                        System.out.println("Se ha creado un nuevo avion: " + plane.getId());
-                        presenter.updateView(planes);
-                        startMovementThread(plane, gameWidth, gameHeight);
-                        gameEnded(plane);
-                        Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
-//                    presenter.updateView(planes);
-                    }
-                    presenter.updateView(planes);
+                if (listEmpty) {
+                    Plane plane = new Plane();
+                    int gameWidth = presenter.getGameWidth();
+                    int gameHeight = presenter.getGameHeight();
+                    addPlane(plane, gameWidth, gameHeight);
+                    System.out.println("Se ha creado un nuevo avion: " + plane.getId());
+                    presenter.updateView();
+                    startMovementThread(plane, gameWidth, gameHeight);
+                    gameEnded(plane);
+                    Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
+//                    presenter.updateView();
                 }
+                presenter.updateView();
+            }
 //            }
         });
         thread.start();
@@ -186,6 +211,12 @@ public class ManagerModel implements Contract.Model {
         }
     }
 
+    @Override
+    public void loadDefaultData() {
+        airstrip = defaultAirstrip();
+        presenter.setViewAirstrip(airstrip);
+    }
+
     private boolean planesCrash(Plane plane1, Plane plane2) {
         return plane1.getCoordinates().getX() < plane2.getCoordinates().getX() + plane2.getHitBox().getWidth() &&
                 plane1.getCoordinates().getX() + plane1.getHitBox().getWidth() > plane2.getCoordinates().getX() &&
@@ -199,5 +230,13 @@ public class ManagerModel implements Contract.Model {
 
     public void setPlanes(List<Plane> planes) {
         this.planes = planes;
+    }
+
+    public int getPlanesArrived() {
+        return planesArrived;
+    }
+
+    public void setPlanesArrived(int planesArrived) {
+        this.planesArrived = planesArrived;
     }
 }

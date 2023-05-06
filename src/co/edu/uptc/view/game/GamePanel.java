@@ -1,6 +1,6 @@
 package co.edu.uptc.view.game;
 
-import co.edu.uptc.model.PropertiesManager;
+import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.presenter.Contract;
@@ -10,19 +10,20 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
 
 public class GamePanel extends JPanel implements MouseMotionListener, MouseListener {
+    private Contract.Presenter presenter;
     private List<Plane> planes;
     private Graphics2D g2d;
     private int planeIdSelected;
-    private Contract.Presenter presenter;
-
+    private Airstrip airstrip;
     public GamePanel(Contract.Presenter presenter) {
         this.presenter = presenter;
         planes = new ArrayList<>();
         planeIdSelected = -1;
+        airstrip = new Airstrip();
         setPreferredSize(new Dimension(500, 500));
         addMouseMotionListener(this);
         addMouseListener(this);
@@ -33,7 +34,7 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
         g2d = (Graphics2D) graphics;
         super.paintComponent(g2d);
         drawBackground();
-        drawRoad();
+        drawAirstrip();
         drawPlanes();
         g2d.drawString(".", 250, 250);
     }
@@ -50,9 +51,8 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
         }
     }
 
-    private void drawRoad() {
-        ImageIcon imageIcon = new ImageIcon(PropertiesManager.getInstance().getProperty("RUNWAY_IMAGE_URL"));
-        g2d.drawImage(imageIcon.getImage(), 250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2, null);
+    private void drawAirstrip() {
+        g2d.drawImage(airstrip.getImage(), (int) airstrip.getCoordinate().getX(), (int) airstrip.getCoordinate().getY(), null);
     }
 
     private void drawBackground() {
@@ -104,6 +104,14 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
 
     private Plane getPlaneClicked(MouseEvent e) {
         return presenter.searchPlane(e.getX(), e.getY());
+    }
+
+    public Airstrip getAirstrip() {
+        return airstrip;
+    }
+
+    public void setAirstrip(Airstrip airstrip) {
+        this.airstrip = airstrip;
     }
 
     @Override

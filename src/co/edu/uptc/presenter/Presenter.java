@@ -1,5 +1,6 @@
 package co.edu.uptc.presenter;
 
+import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Plane;
 
 import java.util.ArrayList;
@@ -66,8 +67,8 @@ public class Presenter implements Contract.Presenter {
     }
 
     @Override
-    public void updateView(List<Plane> planes) {
-        view.updateView(planes);
+    public void updateView() {
+        view.updateView(model.getPlanes(), model.getPlanesArrived());
     }
 
     @Override
@@ -108,5 +109,15 @@ public class Presenter implements Contract.Presenter {
     @Override
     public void setPlaneSpeed(int planeSelectedId, int speed) {
         model.searchPlane(planeSelectedId).setSpeed(speed);
+    }
+
+    @Override
+    public void setViewAirstrip(Airstrip airstrip) {
+        view.setAirstrip(airstrip);
+    }
+
+    @Override
+    public void loadDefaultData() {
+        model.loadDefaultData();
     }
 }

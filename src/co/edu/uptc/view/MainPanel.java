@@ -93,9 +93,10 @@ public class MainPanel extends JPanel {
         configPanel.clearPlanes();
     }
 
-    public void updateView(List<Plane> planes) {
+    public void updateView(List<Plane> planes, int planesArrived) {
         gamePanel.setPlanes(planes);
         scorePanel.setQuantityFlyingPlane(planes.size());
+        scorePanel.setQuantityArrivedPlane(planesArrived);
         gamePanel.repaint();
         scorePanel.repaint();
         configPanel.repaint();

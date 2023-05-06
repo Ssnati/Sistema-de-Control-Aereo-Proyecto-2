@@ -1,5 +1,6 @@
 package co.edu.uptc.presenter;
 
+import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
@@ -23,9 +24,11 @@ public interface Contract {
 
         void clearPlanes();
 
-        void updateView(List<Plane> planes);
+        void updateView(List<Plane> planes, int planesArrived);
 
         void setPlaneToConfigure(Plane plane);
+
+        void setAirstrip(Airstrip airstrip);
     }
 
     interface Model {
@@ -43,7 +46,7 @@ public interface Contract {
 
         List<Coordinate> followRoute(Plane plane, List<Coordinate> coordinates);
 
-        void verifyPlaneArrived(Plane plane);
+        boolean verifyPlaneArrived(Plane plane);
 
         void addPlane(Plane plane, int panelWidth, int panelHeight);
 
@@ -54,6 +57,12 @@ public interface Contract {
         Plane searchPlane(int id);
 
         void addCoordinateToRoute(int planeIdSelected, int x, int y);
+
+        void loadDefaultData();
+
+        int getPlanesArrived();
+
+        List<Plane> getPlanes();
     }
 
     interface Presenter {
@@ -64,16 +73,21 @@ public interface Contract {
         void startGame();
 
         void stopGame();
+
         void setPlaneToConfigure(int idPlane);
 
         boolean gameHasFinished();
 
         int getGameWidth();
+
         int getGameHeight();
-        void updateView(List<Plane> planes);
+
+        void updateView();
 
         Plane searchPlane(int xPos, int yPos);
+
         Plane searchPlane(int id);
+
         void showNotification(String message);
 
         void removeRoute(int id);
@@ -85,5 +99,9 @@ public interface Contract {
         boolean gameIsPaused();
 
         void setPlaneSpeed(int planeSelectedId, int speed);
+
+        void setViewAirstrip(Airstrip airstrip);
+
+        void loadDefaultData();
     }
 }

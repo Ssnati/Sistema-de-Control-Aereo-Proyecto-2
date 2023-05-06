@@ -11,12 +11,13 @@ public class ManagerGeneral {
     public static void main(String[] args) {
         ManagerGeneral generalManager = new ManagerGeneral();
         generalManager.createMVP();
-        generalManager.loadDefaultData();
+//        generalManager.loadDefaultData();
         generalManager.runProject();
+        generalManager.loadDefaultData();
     }
 
     private void loadDefaultData() {
-//        presenter.loadDefaultData();
+        presenter.loadDefaultData();
     }
 
     private void runProject() {

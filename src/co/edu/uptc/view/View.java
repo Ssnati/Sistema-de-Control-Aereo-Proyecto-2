@@ -1,5 +1,6 @@
 package co.edu.uptc.view;
 
+import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.presenter.Contract;
 
@@ -63,12 +64,17 @@ public class View extends JFrame implements Contract.View {
     }
 
     @Override
-    public void updateView(List<Plane> planes) {
-        mainPanel.updateView(planes);
+    public void updateView(List<Plane> planes, int planesArrived) {
+        mainPanel.updateView(planes, planesArrived);
     }
 
     @Override
     public void setPlaneToConfigure(Plane plane) {
         mainPanel.getConfigPanel().setPlaneToConfigure(plane);
+    }
+
+    @Override
+    public void setAirstrip(Airstrip airstrip) {
+        mainPanel.getGamePanel().setAirstrip(airstrip);
     }
 }
