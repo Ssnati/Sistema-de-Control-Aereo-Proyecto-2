@@ -99,6 +99,7 @@ public class Presenter implements Contract.Presenter {
     @Override
     public void pauseAndContinue() {
         pauseGame = !pauseGame;
+        if (!pauseGame) model.notifyContinueGame();
     }
 
     @Override

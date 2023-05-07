@@ -63,6 +63,8 @@ public interface Contract {
         int getPlanesArrived();
 
         List<Plane> getPlanes();
+
+        void notifyContinueGame();
     }
 
     interface Presenter {

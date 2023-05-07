@@ -17,6 +17,7 @@ public class ManagerModel implements Contract.Model {
     private List<Plane> planes;
     private Airstrip airstrip;
     private int planesArrived;
+    private final Object lockGeneration = new Object();
 
     public ManagerModel(Contract.Presenter presenter) {
         this.presenter = presenter;
@@ -98,7 +99,7 @@ public class ManagerModel implements Contract.Model {
         }
         Utils.sleepThread(1000 / plane.getSpeed());
         presenter.updateView();
-        gameEnded(plane);
+        verifyGameEnded(plane);
     }
 
     @Override
@@ -135,6 +136,7 @@ public class ManagerModel implements Contract.Model {
         }
         return hasArrived;
     }
+
     @Override
     public void addPlane(Plane plane, int panelWidth, int panelHeight) {
         plane.setImage(new ImageIcon(PropertiesManager.getInstance().getProperty("PLANE_IMAGE_URL")).getImage());
@@ -149,7 +151,9 @@ public class ManagerModel implements Contract.Model {
     public void startGame() {
         Thread thread = new Thread(() -> {
             while (!presenter.gameHasFinished()) {
-                generatePlanesSynchro();
+                synchronized (lockGeneration) {
+                    generatePlanesSynchro();
+                }
                 presenter.updateView();
             }
         });
@@ -157,8 +161,15 @@ public class ManagerModel implements Contract.Model {
     }
 
     private void generatePlanesSynchro() {
-        boolean listEmpty = planes.size() < 3;
-//                boolean listEmpty = true;
+        while (presenter.gameIsPaused()) {
+            try {
+                lockGeneration.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+//        boolean listEmpty = planes.size() < 3;
+        boolean listEmpty = true;
         if (listEmpty) {
             Plane plane = new Plane();
             int gameWidth = presenter.getGameWidth();
@@ -167,12 +178,12 @@ public class ManagerModel implements Contract.Model {
             System.out.println("Se ha creado un nuevo avion: " + plane.getId());
             presenter.updateView();
             startMovementThread(plane, gameWidth, gameHeight);
-            gameEnded(plane);
+            verifyGameEnded(plane);
             Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
         }
     }
 
-    private void gameEnded(Plane plane) {
+    private void verifyGameEnded(Plane plane) {
         if (verifyCollision(plane, planes)) {
             presenter.stopGame();
             presenter.showNotification("El juego ha terminado, 2 aviones se han chocado");
@@ -214,6 +225,13 @@ public class ManagerModel implements Contract.Model {
     public void loadDefaultData() {
         airstrip = defaultAirstrip();
         presenter.setViewAirstrip(airstrip);
+    }
+
+    @Override
+    public void notifyContinueGame() {
+        synchronized (lockGeneration) {
+            lockGeneration.notify();
+        }
     }
 
     private boolean planesCrash(Plane plane1, Plane plane2) {
