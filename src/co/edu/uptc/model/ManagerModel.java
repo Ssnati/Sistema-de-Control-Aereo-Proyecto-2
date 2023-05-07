@@ -83,20 +83,22 @@ public class ManagerModel implements Contract.Model {
     private void startMovementThread(Plane plane, int gameWidth, int gameHeight) {
         Thread movementTread = new Thread(() -> {
             while (!(presenter.gameHasFinished() || verifyPlaneArrived(plane))) {
-//                if(!presenter.isPauseGame()){
-                if (plane.getRoute().size() > 0) {
-                    plane.setRoute(followRoute(plane, plane.getRoute()));
-                } else {
-                    movePlaneToCenter(plane, gameWidth, gameHeight);
-                }
-                Utils.sleepThread(1000 / plane.getSpeed());
-                presenter.updateView();
-                gameEnded(plane);
-//                }
+                movePlaneSynchro(plane, gameWidth, gameHeight);
             }
             presenter.updateView();
         });
         movementTread.start();
+    }
+
+    private void movePlaneSynchro(Plane plane, int gameWidth, int gameHeight) {
+        if (plane.getRoute().size() > 0) {
+            plane.setRoute(followRoute(plane, plane.getRoute()));
+        } else {
+            movePlaneToCenter(plane, gameWidth, gameHeight);
+        }
+        Utils.sleepThread(1000 / plane.getSpeed());
+        presenter.updateView();
+        gameEnded(plane);
     }
 
     @Override
@@ -121,19 +123,18 @@ public class ManagerModel implements Contract.Model {
 
     @Override
     public boolean verifyPlaneArrived(Plane plane) {
-        double xplane = plane.getCoordinates().getX();
-        double yplane = plane.getCoordinates().getY();
-        double xairstrip = airstrip.getCoordinate().getX();
-        double yairstrip = airstrip.getCoordinate().getY();
-        boolean isInrange = xplane >= xairstrip && xplane <= xairstrip + airstrip.getHitBox().getWidth() && yplane >= yairstrip && yplane <= yairstrip + airstrip.getHitBox().getHeight();
-        if (isInrange) {
-//            plane.setArrived(true);
+        Coordinate planeCoords = plane.getCoordinates();
+        Coordinate airstripCoords = airstrip.getCoordinate();
+        boolean hasArrived = planeCoords.getX() >= airstripCoords.getX() &&
+                planeCoords.getX() <= airstripCoords.getX() + airstrip.getHitBox().getWidth() &&
+                planeCoords.getY() >= airstripCoords.getY() &&
+                planeCoords.getY() <= airstripCoords.getY() + airstrip.getHitBox().getHeight();
+        if (hasArrived) {
             planes.remove(searchPlane(plane.getId()));
             planesArrived++;
         }
-        return isInrange;
+        return hasArrived;
     }
-
     @Override
     public void addPlane(Plane plane, int panelWidth, int panelHeight) {
         plane.setImage(new ImageIcon(PropertiesManager.getInstance().getProperty("PLANE_IMAGE_URL")).getImage());
@@ -146,31 +147,29 @@ public class ManagerModel implements Contract.Model {
 
     @Override
     public void startGame() {
-//        airstrip.setCoordinate(new Coordinate(250 - imageIcon.getIconWidth() / 2, 300 - imageIcon.getIconHeight() / 2));
         Thread thread = new Thread(() -> {
             while (!presenter.gameHasFinished()) {
-//                System.out.println("Esta pausado: " + !presenter.gameIsPaused());
-//                if(!presenter.gameIsPaused()){
-//                    System.out.println("Se ha iniciado el juego" + presenter.gameIsPaused());
-                boolean listEmpty = planes.size() < 3;
-//                boolean listEmpty = true;
-                if (listEmpty) {
-                    Plane plane = new Plane();
-                    int gameWidth = presenter.getGameWidth();
-                    int gameHeight = presenter.getGameHeight();
-                    addPlane(plane, gameWidth, gameHeight);
-                    System.out.println("Se ha creado un nuevo avion: " + plane.getId());
-                    presenter.updateView();
-                    startMovementThread(plane, gameWidth, gameHeight);
-                    gameEnded(plane);
-                    Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
-//                    presenter.updateView();
-                }
+                generatePlanesSynchro();
                 presenter.updateView();
             }
-//            }
         });
         thread.start();
+    }
+
+    private void generatePlanesSynchro() {
+        boolean listEmpty = planes.size() < 3;
+//                boolean listEmpty = true;
+        if (listEmpty) {
+            Plane plane = new Plane();
+            int gameWidth = presenter.getGameWidth();
+            int gameHeight = presenter.getGameHeight();
+            addPlane(plane, gameWidth, gameHeight);
+            System.out.println("Se ha creado un nuevo avion: " + plane.getId());
+            presenter.updateView();
+            startMovementThread(plane, gameWidth, gameHeight);
+            gameEnded(plane);
+            Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
+        }
     }
 
     private void gameEnded(Plane plane) {

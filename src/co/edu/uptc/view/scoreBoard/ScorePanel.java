@@ -1,7 +1,9 @@
 package co.edu.uptc.view.scoreBoard;
 
 import co.edu.uptc.presenter.Contract;
+import co.edu.uptc.utils.Utils;
 import co.edu.uptc.view.Globals;
+import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +58,7 @@ public class ScorePanel extends JPanel {
         });
         pauseButton.addActionListener(e -> {
             presenter.pauseAndContinue();
-            System.out.println("Game paused: " + presenter.gameIsPaused());
+            System.out.println(Utils.getPurpleMessage() + "Game paused: " + presenter.gameIsPaused() + Utils.getResetMessage());
         });
         stopButton.addActionListener(e -> {
             presenter.stopGame();
