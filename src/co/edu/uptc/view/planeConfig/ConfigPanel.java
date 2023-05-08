@@ -59,8 +59,7 @@ public class ConfigPanel extends JPanel {
         colorPanel.getComponent(0).setVisible(false);
         colorChooser.setChooserPanels(new AbstractColorChooserPanel[]{colorPanel});
         colorChooser.getSelectionModel().addChangeListener(e -> {
-            Color color = colorChooser.getColor();
-            System.out.println(color);
+            presenter.changePlaneColor(planeSelected.getId(), colorChooser.getColor());
         });
         colorChooser.setBackground(BACKGROUND_COLOR);
         colorChooser.setForeground(Color.white);

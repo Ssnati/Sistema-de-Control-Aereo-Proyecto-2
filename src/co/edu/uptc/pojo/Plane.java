@@ -14,8 +14,9 @@ public class Plane {
     private Color color;
     private List<Coordinate> coordinatesList;
     private List<Coordinate> route;
+    private int[][] colorMatrix;
 
-    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList, List<Coordinate> route) {
+    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList, List<Coordinate> route, int[][] colorMatrix) {
         this.image = image;
         this.coordinates = coordinates;
         this.hitBox = hitBox;
@@ -24,6 +25,7 @@ public class Plane {
         this.id = id;
         this.coordinatesList = coordinatesList;
         this.route = route;
+        this.colorMatrix = colorMatrix;
     }
 
     public Plane() {
@@ -32,9 +34,10 @@ public class Plane {
         coordinates = new Coordinate();
         hitBox = new HitBox();
         speed = 0;
-        color = Color.red;
+        color = new Color(-327167);
         coordinatesList = new ArrayList<>();
         route = new ArrayList<>();
+        colorMatrix = new int[0][0];
     }
 
     public Image getImage() {
@@ -99,5 +102,13 @@ public class Plane {
 
     public void setRoute(List<Coordinate> route) {
         this.route = route;
+    }
+
+    public int[][] getColorMatrix() {
+        return colorMatrix;
+    }
+
+    public void setColorMatrix(int[][] colorMatrix) {
+        this.colorMatrix = colorMatrix;
     }
 }

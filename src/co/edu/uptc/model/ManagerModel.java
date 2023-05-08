@@ -8,6 +8,8 @@ import co.edu.uptc.presenter.Contract;
 import co.edu.uptc.utils.Utils;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +102,7 @@ public class ManagerModel implements Contract.Model {
         Utils.sleepThread(1000 / plane.getSpeed());
         presenter.updateView();
         verifyGameEnded(plane);
+//        System.out.println(Utils.getCyanMessage() + "Plane " + plane.getId() + " has moved" + Utils.getResetMessage());
     }
 
     @Override
@@ -144,7 +147,21 @@ public class ManagerModel implements Contract.Model {
         plane.setCoordinates(generateCoordinates(plane.getHitBox(), panelWidth, panelHeight));
         plane.setSpeed(generateSpeed());
         plane.setId(generateUniqueId(planes));
+        setColorMatrix(plane);
         planes.add(plane);
+    }
+
+    private void setColorMatrix(Plane plane) {
+        int[][] matrix = new int[plane.getHitBox().getWidth()][plane.getHitBox().getHeight()];
+        BufferedImage image = Utils.toBufferedImage(plane.getImage());
+        for (int i = 0; i < plane.getHitBox().getWidth(); i++) {
+            for (int j = 0; j < plane.getHitBox().getHeight(); j++) {
+                if (image.getRGB(i, j) == plane.getColor().getRGB()) {
+                    matrix[i][j] = 1;
+                }
+            }
+        }
+        plane.setColorMatrix(matrix);
     }
 
     @Override
@@ -168,8 +185,8 @@ public class ManagerModel implements Contract.Model {
                 e.printStackTrace();
             }
         }
-//        boolean listEmpty = planes.size() < 3;
-        boolean listEmpty = true;
+        boolean listEmpty = planes.size() < 3;
+//        boolean listEmpty = true;
         if (listEmpty) {
             Plane plane = new Plane();
             int gameWidth = presenter.getGameWidth();
@@ -234,6 +251,26 @@ public class ManagerModel implements Contract.Model {
         }
     }
 
+    @Override
+    public void changePlaneColor(int idPlane, Color color) {
+        Plane plane = searchPlane(idPlane);
+        if (plane != null) {
+            changePlaneImageColor(plane, color);
+        }
+    }
+
+    private void changePlaneImageColor(Plane plane, Color color) {
+        BufferedImage image = Utils.toBufferedImage(plane.getImage());
+        for (int i = 0; i < plane.getHitBox().getWidth(); i++) {
+            for (int j = 0; j < plane.getHitBox().getHeight(); j++) {
+                if (plane.getColorMatrix()[i][j] == 1) {
+                    image.setRGB(i, j, color.getRGB());
+                }
+            }
+        }
+        plane.setImage(image);
+        plane.setColor(color);
+    }
     private boolean planesCrash(Plane plane1, Plane plane2) {
         return plane1.getCoordinates().getX() < plane2.getCoordinates().getX() + plane2.getHitBox().getWidth() &&
                 plane1.getCoordinates().getX() + plane1.getHitBox().getWidth() > plane2.getCoordinates().getX() &&

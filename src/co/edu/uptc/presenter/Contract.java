@@ -65,6 +65,8 @@ public interface Contract {
         List<Plane> getPlanes();
 
         void notifyContinueGame();
+
+        void changePlaneColor(int idPlane, Color color);
     }
 
     interface Presenter {
@@ -105,5 +107,7 @@ public interface Contract {
         void setViewAirstrip(Airstrip airstrip);
 
         void loadDefaultData();
+
+        void changePlaneColor(int idPlane, Color color);
     }
 }

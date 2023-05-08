@@ -1,5 +1,8 @@
 package co.edu.uptc.utils;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 public class Utils {
     public static void sleepThread(int milliseconds) {
         try {
@@ -31,5 +34,16 @@ public class Utils {
     }
     public static String getResetMessage(){
         return "\033[0m";
+    }
+
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2D = bufferedImage.createGraphics();
+        graphics2D.drawImage(image, 0, 0, null);
+        graphics2D.dispose();
+        return bufferedImage;
     }
 }

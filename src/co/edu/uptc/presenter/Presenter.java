@@ -3,8 +3,8 @@ package co.edu.uptc.presenter;
 import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Plane;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Presenter implements Contract.Presenter {
     private Contract.Model model;
@@ -120,5 +120,10 @@ public class Presenter implements Contract.Presenter {
     @Override
     public void loadDefaultData() {
         model.loadDefaultData();
+    }
+
+    @Override
+    public void changePlaneColor(int planeSelected, Color color) {
+        model.changePlaneColor(planeSelected, color);
     }
 }
