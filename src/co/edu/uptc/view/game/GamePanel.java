@@ -53,6 +53,9 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
             int yNext = (int) coordinateList.get(i + 1).getY();
             g2d.drawLine(x, y, xNext, yNext);
         }
+//        for (Coordinate coordinate : coordinateList){
+//            g2d.fillOval((int)coordinate.getX(), (int)coordinate.getY(), 1, 1);
+//        }
     }
 
     private void drawAirstrip() {

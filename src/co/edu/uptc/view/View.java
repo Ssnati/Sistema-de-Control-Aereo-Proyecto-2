@@ -12,6 +12,7 @@ public class View extends JFrame implements Contract.View {
 
     private Contract.Presenter presenter;
     private MainPanel mainPanel;
+    private StartPanel startPanel;
 
     public View(Contract.Presenter presenter) {
         this.presenter = presenter;
@@ -26,6 +27,8 @@ public class View extends JFrame implements Contract.View {
 
     private void initComponents() {
         mainPanel = new MainPanel(presenter);
+        getContentPane().add(mainPanel);
+        startPanel = new StartPanel(presenter);
         add(mainPanel);
     }
 
@@ -43,6 +46,7 @@ public class View extends JFrame implements Contract.View {
     public Dimension getDimension() {
         return mainPanel.getGamePanel().getSize();
     }
+
     @Override
     public List<Plane> getPlaneList() {
         return mainPanel.getGamePanel().getPlanes();

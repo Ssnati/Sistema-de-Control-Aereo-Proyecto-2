@@ -31,14 +31,7 @@ public class Presenter implements Contract.Presenter {
     }
 
     private void restartGame() {
-        if (view.getConfirmation("¿Desea reiniciar el juego?")) {
-            view.clearPlanes();
-            finishGame = false;
-            startGame();
-        } else {
-            System.exit(0);
-        }
-
+        startGame();
     }
 
     @Override

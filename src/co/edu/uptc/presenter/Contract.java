@@ -55,6 +55,8 @@ public interface Contract {
         void notifyContinueGame();
 
         void changePlaneColor(int idPlane, Color color);
+
+        void clearPlanes();
     }
 
     interface Presenter {

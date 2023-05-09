@@ -83,7 +83,16 @@ public class ManagerModel implements Contract.Model {
     private void startMovementThread(Plane plane) {
         Thread movementTread = new Thread(() -> {
             while (!(presenter.gameHasFinished() || verifyPlaneArrived(plane))) {
-                movePlaneSynchro(plane);
+                synchronized (plane){
+                    if (presenter.gameIsPaused()){
+                        try {
+                            plane.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    movePlaneSynchro(plane);
+                }
             }
             presenter.updateView();
         });
@@ -97,7 +106,7 @@ public class ManagerModel implements Contract.Model {
             System.out.println(Utils.getBlueMessage() + "Plane " + plane.getId() + " is following route" + Utils.getResetMessage());
         }
         movePlaneToAngle(plane);
-        Utils.sleepThread(1000 / plane.getSpeed());
+        Utils.sleepThread(1000);
         presenter.updateView();
         verifyGameEnded(plane);
 //        System.out.println(Utils.getCyanMessage() + "Plane " + plane.getId() + " has moved" + Utils.getResetMessage());
@@ -195,6 +204,7 @@ public class ManagerModel implements Contract.Model {
                 presenter.updateView();
             }
             presenter.showNotification("El juego ha terminado, 2 aviones se han estrellado y " + planesArrived + " han aterrizado");
+//            presenter.restartGame();
         });
         thread.start();
     }
@@ -270,6 +280,11 @@ public class ManagerModel implements Contract.Model {
         synchronized (lockGeneration) {
             lockGeneration.notify();
         }
+        for (Plane plane : planes){
+            synchronized (plane) {
+                plane.notify();
+            }
+        }
     }
 
     @Override
@@ -278,6 +293,12 @@ public class ManagerModel implements Contract.Model {
         if (plane != null) {
             changePlaneImageColor(plane, color);
         }
+    }
+
+    @Override
+    public void clearPlanes() {
+        planes.clear();
+
     }
 
     private void changePlaneImageColor(Plane plane, Color color) {
