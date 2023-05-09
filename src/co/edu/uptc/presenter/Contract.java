@@ -34,18 +34,6 @@ public interface Contract {
     interface Model {
         void setPresenter(Presenter presenter);
 
-        Coordinate generateCoordinates(HitBox hitBox, int panelWidth, int panelHeight);
-
-        int generateSpeed();
-
-        boolean verifyCollision(Plane plane, List<Plane> planeList);
-
-        void movePlaneToCenter(Plane plane, int gameWidth, int gameHeight);
-
-        int generateUniqueId(List<Plane> planeList);
-
-        List<Coordinate> followRoute(Plane plane, List<Coordinate> coordinates);
-
         boolean verifyPlaneArrived(Plane plane);
 
         void addPlane(Plane plane, int panelWidth, int panelHeight);

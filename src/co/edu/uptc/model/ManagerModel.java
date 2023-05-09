@@ -42,7 +42,6 @@ public class ManagerModel implements Contract.Model {
         this.presenter = presenter;
     }
 
-    @Override
     public Coordinate generateCoordinates(HitBox hitBox, int panelWidth, int panelHeight) {
         int random = (int) (Math.random() * 4);
         Coordinate coordinate = new Coordinate();
@@ -53,13 +52,11 @@ public class ManagerModel implements Contract.Model {
         return coordinate;
     }
 
-    @Override
     public int generateSpeed() {
         int random = (int) (Math.random() * Integer.parseInt(PropertiesManager.getInstance().getProperty("MAX_SPEED_INT")));
         return random == 0 ? 1 : random;
     }
 
-    @Override
     public boolean verifyCollision(Plane planeToVerify, List<Plane> planeList) {
         for (Plane plane : planeList) {
             if (planeToVerify != plane) {
@@ -71,41 +68,51 @@ public class ManagerModel implements Contract.Model {
         return false;
     }
 
-    @Override
-    public void movePlaneToCenter(Plane plane, int gameWidth, int gameHeight) {
-        double x = plane.getCoordinates().getX();
-        double y = plane.getCoordinates().getY();
-        double angle = Math.atan2((double) gameHeight / 2 - y, (double) gameWidth / 2 - x);
+    public void movePlaneToAngle(Plane plane) {
+        System.out.println(Utils.getPurpleMessage() + "Plane " + plane.getId() + " is moving to angle" + Utils.getResetMessage());
+        double angle = Math.toRadians(plane.getAngle());
         double xOneMove = (Math.cos(angle));
         double yOneMove = (Math.sin(angle));
+        double x = plane.getCoordinates().getX();
+        double y = plane.getCoordinates().getY();
         Coordinate coordinate = new Coordinate(x + xOneMove, y + yOneMove);
         plane.setCoordinates(coordinate);
         plane.getCoordinatesList().add(coordinate);
     }
 
-    private void startMovementThread(Plane plane, int gameWidth, int gameHeight) {
+    private void startMovementThread(Plane plane) {
         Thread movementTread = new Thread(() -> {
             while (!(presenter.gameHasFinished() || verifyPlaneArrived(plane))) {
-                movePlaneSynchro(plane, gameWidth, gameHeight);
+                movePlaneSynchro(plane);
             }
             presenter.updateView();
         });
         movementTread.start();
     }
 
-    private void movePlaneSynchro(Plane plane, int gameWidth, int gameHeight) {
+    private void movePlaneSynchro(Plane plane) {
+        verifyPlaneIsOnBorder(plane);
         if (plane.getRoute().size() > 0) {
             plane.setRoute(followRoute(plane, plane.getRoute()));
-        } else {
-            movePlaneToCenter(plane, gameWidth, gameHeight);
+            System.out.println(Utils.getBlueMessage() + "Plane " + plane.getId() + " is following route" + Utils.getResetMessage());
         }
+        movePlaneToAngle(plane);
         Utils.sleepThread(1000 / plane.getSpeed());
         presenter.updateView();
         verifyGameEnded(plane);
 //        System.out.println(Utils.getCyanMessage() + "Plane " + plane.getId() + " has moved" + Utils.getResetMessage());
     }
 
-    @Override
+    private void verifyPlaneIsOnBorder(Plane plane) {
+        if (plane.getCoordinates().getX() < 0 || plane.getCoordinates().getX() + plane.getHitBox().getWidth() > presenter.getGameWidth() ||
+                plane.getCoordinates().getY() < 0 || plane.getCoordinates().getY() + plane.getHitBox().getHeight() > presenter.getGameHeight()) {
+            System.out.println(Utils.getGreenMessage() + "Plane " + plane.getId() + " previous angle: " + plane.getAngle() + Utils.getResetMessage());
+            plane.setAngle(getAngleToCenter(plane, presenter.getGameWidth(), presenter.getGameHeight()));
+            plane.setRoute(new ArrayList<>());
+            System.out.println(Utils.getRedMessage() + "Plane " + plane.getId() + " has changed angle: " + plane.getAngle() + Utils.getResetMessage());
+        }
+    }
+
     public int generateUniqueId(List<Plane> planeList) {
         int id = 0;
         List<Integer> idList = planeList.stream().map(Plane::getId).toList();
@@ -115,14 +122,20 @@ public class ManagerModel implements Contract.Model {
         return id;
     }
 
-    @Override
     public List<Coordinate> followRoute(Plane plane, List<Coordinate> route) {
         Coordinate coordinate = route.get(0);
         Coordinate coordinateInMiddle = new Coordinate(coordinate.getX() - (double) plane.getHitBox().getWidth() / 2, coordinate.getY() - (double) plane.getHitBox().getHeight() / 2);
+        changeAngle(plane, coordinateInMiddle);
         plane.setCoordinates(coordinateInMiddle);
         plane.getCoordinatesList().add(coordinateInMiddle);
         route.remove(0);
         return route;
+    }
+
+    private void changeAngle(Plane plane, Coordinate coordinateToRotate) {
+        Coordinate lastCoordinate = plane.getCoordinates();
+        double angle = Math.toDegrees(Math.atan2(coordinateToRotate.getY() - lastCoordinate.getY(), coordinateToRotate.getX() - lastCoordinate.getX()));
+        plane.setAngle(angle);
     }
 
     @Override
@@ -148,7 +161,15 @@ public class ManagerModel implements Contract.Model {
         plane.setSpeed(generateSpeed());
         plane.setId(generateUniqueId(planes));
         setColorMatrix(plane);
+        plane.setAngle(getAngleToCenter(plane, panelWidth, panelHeight));
         planes.add(plane);
+    }
+
+    private double getAngleToCenter(Plane plane, int panelWidth, int panelHeight) {
+        double x = plane.getCoordinates().getX();
+        double y = plane.getCoordinates().getY();
+        double angle = Math.atan2((double) panelHeight / 2 - y, (double) panelWidth / 2 - x);
+        return Math.toDegrees(angle);
     }
 
     private void setColorMatrix(Plane plane) {
@@ -173,6 +194,7 @@ public class ManagerModel implements Contract.Model {
                 }
                 presenter.updateView();
             }
+            presenter.showNotification("El juego ha terminado, 2 aviones se han estrellado y " + planesArrived + " han aterrizado");
         });
         thread.start();
     }
@@ -194,7 +216,7 @@ public class ManagerModel implements Contract.Model {
             addPlane(plane, gameWidth, gameHeight);
             System.out.println("Se ha creado un nuevo avion: " + plane.getId());
             presenter.updateView();
-            startMovementThread(plane, gameWidth, gameHeight);
+            startMovementThread(plane);
             verifyGameEnded(plane);
             Utils.sleepThread((int) (Double.parseDouble(PropertiesManager.getInstance().getProperty("GENERATION_SPEED_IN_SECONDS")) * 1000));
         }
@@ -203,7 +225,6 @@ public class ManagerModel implements Contract.Model {
     private void verifyGameEnded(Plane plane) {
         if (verifyCollision(plane, planes)) {
             presenter.stopGame();
-            presenter.showNotification("El juego ha terminado, 2 aviones se han chocado");
         }
     }
 
@@ -271,6 +292,7 @@ public class ManagerModel implements Contract.Model {
         plane.setImage(image);
         plane.setColor(color);
     }
+
     private boolean planesCrash(Plane plane1, Plane plane2) {
         return plane1.getCoordinates().getX() < plane2.getCoordinates().getX() + plane2.getHitBox().getWidth() &&
                 plane1.getCoordinates().getX() + plane1.getHitBox().getWidth() > plane2.getCoordinates().getX() &&

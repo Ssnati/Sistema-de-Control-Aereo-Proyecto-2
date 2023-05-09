@@ -15,8 +15,9 @@ public class Plane {
     private List<Coordinate> coordinatesList;
     private List<Coordinate> route;
     private int[][] colorMatrix;
+    private double angle;
 
-    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList, List<Coordinate> route, int[][] colorMatrix) {
+    public Plane(Image image, Coordinate coordinates, HitBox hitBox, int speed, Color color, int id, List<Coordinate> coordinatesList, List<Coordinate> route, int[][] colorMatrix, double angle) {
         this.image = image;
         this.coordinates = coordinates;
         this.hitBox = hitBox;
@@ -26,6 +27,7 @@ public class Plane {
         this.coordinatesList = coordinatesList;
         this.route = route;
         this.colorMatrix = colorMatrix;
+        this.angle = angle;
     }
 
     public Plane() {
@@ -110,5 +112,13 @@ public class Plane {
 
     public void setColorMatrix(int[][] colorMatrix) {
         this.colorMatrix = colorMatrix;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 }

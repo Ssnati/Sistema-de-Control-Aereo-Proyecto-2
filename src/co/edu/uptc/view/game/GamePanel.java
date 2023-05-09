@@ -4,12 +4,15 @@ import co.edu.uptc.pojo.Airstrip;
 import co.edu.uptc.pojo.Coordinate;
 import co.edu.uptc.pojo.Plane;
 import co.edu.uptc.presenter.Contract;
+import co.edu.uptc.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     private Graphics2D g2d;
     private int planeIdSelected;
     private Airstrip airstrip;
+
     public GamePanel(Contract.Presenter presenter) {
         this.presenter = presenter;
         planes = new ArrayList<>();
@@ -65,9 +69,23 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
             drawTail(plane);
             if (plane.getRoute().size() > 0) drawRoute(plane);
             g2d.setColor(plane.getColor());
-            g2d.drawImage(plane.getImage(), (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
-            drawHitBox(g2d, plane);
+            BufferedImage image = rotateImage(Utils.toBufferedImage(plane.getImage()), plane.getAngle());
+            g2d.drawImage(image, (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
+//            drawHitBox(g2d, plane);
         }
+    }
+
+    public static BufferedImage rotateImage(BufferedImage image, double angle) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage rotatedImage = new BufferedImage(width, height, image.getType());
+        Graphics2D g2d = rotatedImage.createGraphics();
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(Math.toRadians(angle + 90), (double) width / 2, (double) height / 2);
+        g2d.setTransform(transform);
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+        return rotatedImage;
     }
 
     private void drawHitBox(Graphics2D g, Plane plane) {
