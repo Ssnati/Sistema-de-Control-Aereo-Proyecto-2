@@ -68,13 +68,15 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
     }
 
     private void drawPlanes() {
-        for (Plane plane : planes) {
-            drawTail(plane);
-            if (plane.getRoute().size() > 0) drawRoute(plane);
-            g2d.setColor(plane.getColor());
-            BufferedImage image = rotateImage(Utils.toBufferedImage(plane.getImage()), plane.getAngle());
-            g2d.drawImage(image, (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
+        synchronized (planes) {
+            for (Plane plane : planes) {
+                drawTail(plane);
+                if (plane.getRoute().size() > 0) drawRoute(plane);
+                g2d.setColor(plane.getColor());
+                BufferedImage image = rotateImage(Utils.toBufferedImage(plane.getImage()), plane.getAngle());
+                g2d.drawImage(image, (int) plane.getCoordinates().getX(), (int) plane.getCoordinates().getY(), null);
 //            drawHitBox(g2d, plane);
+            }
         }
     }
 

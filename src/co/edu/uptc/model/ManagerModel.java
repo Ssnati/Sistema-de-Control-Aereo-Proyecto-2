@@ -171,7 +171,9 @@ public class ManagerModel implements Contract.Model {
         plane.setId(generateUniqueId(planes));
         setColorMatrix(plane);
         plane.setAngle(getAngleToCenter(plane, panelWidth, panelHeight));
-        planes.add(plane);
+        synchronized (planes) {
+            planes.add(plane);
+        }
     }
 
     private double getAngleToCenter(Plane plane, int panelWidth, int panelHeight) {
@@ -217,8 +219,8 @@ public class ManagerModel implements Contract.Model {
                 e.printStackTrace();
             }
         }
-        boolean listEmpty = planes.size() < 3;
-//        boolean listEmpty = true;
+//        boolean listEmpty = planes.size() < 3;
+        boolean listEmpty = true;
         if (listEmpty) {
             Plane plane = new Plane();
             int gameWidth = presenter.getGameWidth();
