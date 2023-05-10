@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerModel implements Contract.Model {
-
     private Contract.Presenter presenter;
     private List<Plane> planes;
     private Airstrip airstrip;
@@ -34,7 +33,23 @@ public class ManagerModel implements Contract.Model {
         double x = (double) (presenter.getGameWidth() - airstrip.getHitBox().getWidth()) / 2;
         double y = (double) (presenter.getGameHeight() + airstrip.getHitBox().getHeight()) / 2;
         airstrip.setCoordinate(new Coordinate(x, y));
+        airstrip.setArrivalHitBoxes(setArrivalHitBoxes(airstrip));
         return airstrip;
+    }
+
+    private List<Rectangle> setArrivalHitBoxes(Airstrip airstrip) {
+        List<Rectangle> arrivalHitBoxes = new ArrayList<>();
+        int width = airstrip.getHitBox().getWidth();
+        int height = airstrip.getHitBox().getHeight();
+        int x = (int) airstrip.getCoordinate().getX();
+        int y = (int) airstrip.getCoordinate().getY();
+        int HIT_BOX_SIZE = Integer.parseInt(PropertiesManager.getInstance().getProperty("HIT_BOX_ARRIVED_ZONE_SIZE"));
+        int yMiddle = y + height / 2 - HIT_BOX_SIZE / 2;
+        arrivalHitBoxes.add(new Rectangle(x + 2, yMiddle, HIT_BOX_SIZE / 4, HIT_BOX_SIZE));
+        arrivalHitBoxes.add(new Rectangle(x + 30, yMiddle, HIT_BOX_SIZE / 4, HIT_BOX_SIZE));
+        arrivalHitBoxes.add(new Rectangle(x + width - HIT_BOX_SIZE / 4 - 30, yMiddle, HIT_BOX_SIZE / 4, HIT_BOX_SIZE));
+        arrivalHitBoxes.add(new Rectangle(x + width - HIT_BOX_SIZE / 4 - 2, yMiddle, HIT_BOX_SIZE / 4, HIT_BOX_SIZE));
+        return arrivalHitBoxes;
     }
 
     @Override
@@ -69,7 +84,7 @@ public class ManagerModel implements Contract.Model {
     }
 
     public void movePlaneToAngle(Plane plane) {
-        System.out.println(Utils.getPurpleMessage() + "Plane " + plane.getId() + " is moving to angle" + Utils.getResetMessage());
+//        System.out.println(Utils.getPurpleMessage() + "Plane " + plane.getId() + " is moving to angle" + Utils.getResetMessage());
         double angle = Math.toRadians(plane.getAngle());
         double xOneMove = (Math.cos(angle));
         double yOneMove = (Math.sin(angle));
@@ -82,9 +97,9 @@ public class ManagerModel implements Contract.Model {
 
     private void startMovementThread(Plane plane) {
         Thread movementTread = new Thread(() -> {
-            while (!(presenter.gameHasFinished() || verifyPlaneArrived(plane))) {
-                synchronized (plane){
-                    if (presenter.gameIsPaused()){
+            while (!(presenter.gameHasFinished() || removeIfPlaneHasArrived(plane))) {
+                synchronized (plane) {
+                    if (presenter.gameIsPaused()) {
                         try {
                             plane.wait();
                         } catch (InterruptedException e) {
@@ -103,18 +118,20 @@ public class ManagerModel implements Contract.Model {
         verifyPlaneIsOnBorder(plane);
         if (plane.getRoute().size() > 0) {
             plane.setRoute(followRoute(plane, plane.getRoute()));
-            System.out.println(Utils.getBlueMessage() + "Plane " + plane.getId() + " is following route" + Utils.getResetMessage());
+//            System.out.println(Utils.getBlueMessage() + "Plane " + plane.getId() + " is following route" + Utils.getResetMessage());
         }
         movePlaneToAngle(plane);
-        Utils.sleepThread(1000);
+        Utils.sleepThread(1000 / plane.getSpeed());
         presenter.updateView();
         verifyGameEnded(plane);
 //        System.out.println(Utils.getCyanMessage() + "Plane " + plane.getId() + " has moved" + Utils.getResetMessage());
     }
 
     private void verifyPlaneIsOnBorder(Plane plane) {
-        if (plane.getCoordinates().getX() < 0 || plane.getCoordinates().getX() + plane.getHitBox().getWidth() > presenter.getGameWidth() ||
-                plane.getCoordinates().getY() < 0 || plane.getCoordinates().getY() + plane.getHitBox().getHeight() > presenter.getGameHeight()) {
+        int width = plane.getHitBox().getWidth();
+        int height = plane.getHitBox().getHeight();
+        if (plane.getCoordinates().getX() < 0 - (double) width / 2 || plane.getCoordinates().getX() + plane.getHitBox().getWidth() > presenter.getGameWidth() + (double) width / 2 ||
+                plane.getCoordinates().getY() < 0 - (double) height / 2 || plane.getCoordinates().getY() + plane.getHitBox().getHeight() > presenter.getGameHeight() + (double) height / 2) {
             System.out.println(Utils.getGreenMessage() + "Plane " + plane.getId() + " previous angle: " + plane.getAngle() + Utils.getResetMessage());
             plane.setAngle(getAngleToCenter(plane, presenter.getGameWidth(), presenter.getGameHeight()));
             plane.setRoute(new ArrayList<>());
@@ -147,19 +164,35 @@ public class ManagerModel implements Contract.Model {
         plane.setAngle(angle);
     }
 
-    @Override
-    public boolean verifyPlaneArrived(Plane plane) {
-        Coordinate planeCoords = plane.getCoordinates();
-        Coordinate airstripCoords = airstrip.getCoordinate();
-        boolean hasArrived = planeCoords.getX() >= airstripCoords.getX() &&
-                planeCoords.getX() <= airstripCoords.getX() + airstrip.getHitBox().getWidth() &&
-                planeCoords.getY() >= airstripCoords.getY() &&
-                planeCoords.getY() <= airstripCoords.getY() + airstrip.getHitBox().getHeight();
+    private boolean removeIfPlaneHasArrived(Plane plane) {
+        boolean checkH0 = checkPlaneCrossedAirstripHitbox(0, plane);
+        boolean checkH1;
+        if (checkH0) checkH1 = checkPlaneCrossedAirstripHitbox(1, plane);
+        else checkH1 = false;
+
+        boolean checkH3 = checkPlaneCrossedAirstripHitbox(3, plane);
+        boolean checkH2;
+        if (checkH3) checkH2 = checkPlaneCrossedAirstripHitbox(2, plane);
+        else checkH2 = false;
+
+        boolean hasArrived = checkH1 || checkH2;
         if (hasArrived) {
             planes.remove(searchPlane(plane.getId()));
             planesArrived++;
         }
+
         return hasArrived;
+    }
+
+    private boolean checkPlaneCrossedAirstripHitbox(int hitboxNumber, Plane plane) {
+        Rectangle rectangle = airstrip.getArrivalHitBoxes().get(hitboxNumber);
+        for (Coordinate coordinate : plane.getCoordinatesList()) {
+            if (rectangle.contains(coordinate.getX(), coordinate.getY())) {
+                System.out.println(Utils.getGreenMessage() + "Plane " + plane.getId() + " has arrived" + Utils.getResetMessage());
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -205,6 +238,7 @@ public class ManagerModel implements Contract.Model {
                 }
                 presenter.updateView();
             }
+            Utils.sleepThread(1000);
             presenter.showNotification("El juego ha terminado, 2 aviones se han estrellado y " + planesArrived + " han aterrizado");
             if (presenter.getConfirmation("¿Desea reiniciar el juego?")) {
                 presenter.clearPlanes();
@@ -225,8 +259,8 @@ public class ManagerModel implements Contract.Model {
                 e.printStackTrace();
             }
         }
-//        boolean listEmpty = planes.size() < 3;
-        boolean listEmpty = true;
+        boolean listEmpty = planes.size() < 3;
+//        boolean listEmpty = true;
         if (listEmpty) {
             Plane plane = new Plane();
             int gameWidth = presenter.getGameWidth();
@@ -288,7 +322,7 @@ public class ManagerModel implements Contract.Model {
         synchronized (lockGeneration) {
             lockGeneration.notify();
         }
-        for (Plane plane : planes){
+        for (Plane plane : planes) {
             synchronized (plane) {
                 plane.notify();
             }

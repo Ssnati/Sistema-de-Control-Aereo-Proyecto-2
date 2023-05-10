@@ -60,6 +60,10 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
 
     private void drawAirstrip() {
         g2d.drawImage(airstrip.getImage(), (int) airstrip.getCoordinate().getX(), (int) airstrip.getCoordinate().getY(), null);
+        for (Rectangle rectangle : airstrip.getArrivalHitBoxes()) {
+            g2d.setColor(Color.blue);
+            g2d.fillRect((int) rectangle.getX(), (int) rectangle.getY(), (int) rectangle.getWidth(), (int) rectangle.getHeight());
+        }
     }
 
     private void drawBackground() {
@@ -143,6 +147,12 @@ public class GamePanel extends JPanel implements MouseMotionListener, MouseListe
             presenter.addCoordinateToRoute(planeIdSelected, e.getX(), e.getY());
             repaint();
         }
+//        for (Rectangle rectangle : airstrip.getArrivalHitBoxes()) {
+//            if (rectangle.contains(e.getX(), e.getY())) {
+//                System.out.println(Utils.getCyanMessage() + "Arrival hitbox: " + rectangle.x + " " + rectangle.y + " " + rectangle.width + " " + rectangle.height);
+//            }
+//
+//        }
     }
 
     @Override

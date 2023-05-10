@@ -32,8 +32,6 @@ public interface Contract {
     interface Model {
         void setPresenter(Presenter presenter);
 
-        boolean verifyPlaneArrived(Plane plane);
-
         void addPlane(Plane plane, int panelWidth, int panelHeight);
 
         void startGame();
