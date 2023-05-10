@@ -206,7 +206,13 @@ public class ManagerModel implements Contract.Model {
                 presenter.updateView();
             }
             presenter.showNotification("El juego ha terminado, 2 aviones se han estrellado y " + planesArrived + " han aterrizado");
-//            presenter.restartGame();
+            if (presenter.getConfirmation("¿Desea reiniciar el juego?")) {
+                presenter.clearPlanes();
+                presenter.setFinishGame(false);
+                presenter.startGame();
+            } else {
+                presenter.setFinishGame(true);
+            }
         });
         thread.start();
     }
@@ -236,7 +242,7 @@ public class ManagerModel implements Contract.Model {
 
     private void verifyGameEnded(Plane plane) {
         if (verifyCollision(plane, planes)) {
-            presenter.stopGame();
+            presenter.setFinishGame(true);
         }
     }
 
@@ -300,7 +306,7 @@ public class ManagerModel implements Contract.Model {
     @Override
     public void clearPlanes() {
         planes.clear();
-
+        planesArrived = 0;
     }
 
     private void changePlaneImageColor(Plane plane, Color color) {

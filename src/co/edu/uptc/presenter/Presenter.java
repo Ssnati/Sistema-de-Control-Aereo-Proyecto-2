@@ -30,13 +30,9 @@ public class Presenter implements Contract.Presenter {
         model.startGame();
     }
 
-    private void restartGame() {
-        startGame();
-    }
-
     @Override
-    public void stopGame() {
-        finishGame = true;
+    public void setFinishGame(boolean finishGame) {
+        this.finishGame = finishGame;
     }
 
     @Override
@@ -118,5 +114,16 @@ public class Presenter implements Contract.Presenter {
     @Override
     public void changePlaneColor(int planeSelected, Color color) {
         model.changePlaneColor(planeSelected, color);
+    }
+
+    @Override
+    public boolean getConfirmation(String message) {
+        return view.getConfirmation(message);
+    }
+
+    @Override
+    public void clearPlanes() {
+        view.clearPlanes();
+        model.clearPlanes();
     }
 }

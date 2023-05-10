@@ -1,8 +1,6 @@
 package co.edu.uptc.presenter;
 
 import co.edu.uptc.pojo.Airstrip;
-import co.edu.uptc.pojo.Coordinate;
-import co.edu.uptc.pojo.HitBox;
 import co.edu.uptc.pojo.Plane;
 
 import java.awt.*;
@@ -66,7 +64,7 @@ public interface Contract {
 
         void startGame();
 
-        void stopGame();
+        void setFinishGame(boolean finishGame);
 
         void setPlaneToConfigure(int idPlane);
 
@@ -99,5 +97,9 @@ public interface Contract {
         void loadDefaultData();
 
         void changePlaneColor(int idPlane, Color color);
+
+        boolean getConfirmation(String message);
+
+        void clearPlanes();
     }
 }

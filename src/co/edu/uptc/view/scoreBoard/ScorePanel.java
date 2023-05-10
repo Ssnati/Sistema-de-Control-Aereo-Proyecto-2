@@ -61,7 +61,7 @@ public class ScorePanel extends JPanel {
             System.out.println(Utils.getPurpleMessage() + "Game paused: " + presenter.gameIsPaused() + Utils.getResetMessage());
         });
         stopButton.addActionListener(e -> {
-            presenter.stopGame();
+            presenter.setFinishGame(true);
         });
         exitButton.addActionListener(e -> System.exit(0));
     }
