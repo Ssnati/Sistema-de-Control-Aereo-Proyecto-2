@@ -44,7 +44,7 @@ No requiere instalación especial. Puedes ejecutar el simulador como cualquier a
 
 ## 👨‍💻 Autores
 
-- Ssnati
+- Santiago Orjuela (Ssnati)
 
 ## 📄 Licencia
 
